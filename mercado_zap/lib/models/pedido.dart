@@ -44,4 +44,6 @@ class Pedido {
     // e retorna a mensagem final
     return buffer.toString();
   }
+
+  static fromMap(e) {}
 }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "110294184764",
+    "project_id": "mercado-zap-45dca",
+    "storage_bucket": "mercado-zap-45dca.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:110294184764:android:1f74b3f450e75b455b6439",
+        "android_client_info": {
+          "package_name": "Mercado.zap"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCr3ygo0FbIbckl-DpY_g6engjR9OTGqcE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:hive/hive.dart';
 import 'package:mercado_zap/models/pedido.dart';
 import 'package:mercado_zap/providers/cart_provider.dart';
 
@@ -41,7 +42,9 @@ class PdvProvider with ChangeNotifier {
       data: DateTime.now(),
     );
     //salvar no banco
-await banco.salvarPedido(pedido); // aqui vai ver salvando no bacno depois modelar conforeme preciso
+    final box = Hive.box('mybox');
+    await box.put(id, pedido.toMap());
+// aqui vai ver salvando no bacno depois modelar conforeme preciso
     //gerar mensagem
   final msg = pedido.gerarMensagem();
     //limpar carrinho

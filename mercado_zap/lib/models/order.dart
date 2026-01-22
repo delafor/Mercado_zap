@@ -12,22 +12,20 @@ class Order {
     required this.total,
     required this.date,
   });
-  Order.fromMap(Map<String, dynamic> map) 
-  : id = map['id'],
-    items = map['items'],
-    status = map['status'],
-    total = map['total'],
-    date = map['date'];
+  Order.fromMap(Map<String, dynamic> map)
+    : id = map['id'],
+      items = map['items'],
+      status = map['status'],
+      total = map['total'],
+      date = map['date'];
 
-    Map<String, dynamic> toMap() {
-      return {
-        'id': id,
-        'items': items,
-        'status': status,
-        'total': total,
-        'date': date,
-      };
-    }
-    
-  
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'items': items,
+      'status': status,
+      'total': total,
+      'date': date,
+    };
+  }
 }

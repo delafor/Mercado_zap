@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mercado_zap/pages/cart_page.dart';
 import 'package:mercado_zap/pages/checkout_page.dart';
 import 'package:mercado_zap/pages/home_page.dart';
+import 'package:mercado_zap/providers/product_provider.dart';
 
 class MainPage extends StatefulWidget {
   // const MainPage({Key? key}) : super(key: key);

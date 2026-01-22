@@ -5,6 +5,7 @@ class Product {
   String description;
   String? urlImagem;
   String unidade;
+  double price;
 
   Product({
     required this.id,
@@ -13,14 +14,20 @@ class Product {
     required this.description,
     this.urlImagem,
     required this.unidade,
+    required this.price,
   });
-  Product.fromMap(Map<String, dynamic> map)
-    : id = map['id'],
-      name = map['name'],
-      category = map['category'],
-      description = map['description'],
-      urlImagem = map['urlImagem'],
-      unidade = map['unidade'];
+
+  factory Product.fromMap(Map<String, dynamic> map) {
+    return Product(
+      id: map['id']?.toString() ?? '',
+      name: map['name']?.toString() ?? '',
+      category: map['category']?.toString() ?? '',
+      description: map['description']?.toString() ?? '',
+      urlImagem: map['urlImagem']?.toString(),
+      unidade: map['unidade']?.toString() ?? '',
+      price: (map['price'] ?? 0).toDouble(),
+    );
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -30,6 +37,7 @@ class Product {
       'description': description,
       'urlImagem': urlImagem,
       'unidade': unidade,
+      'price': price,
     };
   }
 }

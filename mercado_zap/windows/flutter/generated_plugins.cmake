@@ -3,7 +3,11 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  isar_plus_flutter_libs
+  app_links
+  cloud_firestore
+  firebase_core
+  firebase_storage
+  url_launcher_windows
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
