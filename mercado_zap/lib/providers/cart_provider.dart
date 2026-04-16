@@ -26,6 +26,7 @@ class CartProvider with ChangeNotifier {
     }
     notifyListeners();
   }
+  
   //remover item(unidade)
 
   void removerItem(CartItem item) {

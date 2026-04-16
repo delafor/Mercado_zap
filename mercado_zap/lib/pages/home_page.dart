@@ -4,11 +4,13 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:mercado_zap/database/read_database.dart';
 import 'package:mercado_zap/models/Address.dart';
+import 'package:mercado_zap/models/cart_item.dart';
 import 'package:mercado_zap/models/product.dart';
 import 'package:mercado_zap/pages/dialog_local.dart';
 import 'package:mercado_zap/providers/product_provider.dart';
 import 'package:mercado_zap/widgets/BannerCarousel.dart';
 import 'package:provider/provider.dart';
+import 'package:mercado_zap/providers/cart_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -219,15 +221,84 @@ class _HomePageState extends State<HomePage> {
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+
                         children: [
+                          const SizedBox(height: 4),
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.asset(
+                                'lib/assets/banner/baixados.jpg', // ajuste para o campo do seu modelo
+                                height: 130,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => Container(
+                                  height: 90,
+                                  color: colors.primaryContainer,
+                                  child: Icon(
+                                    Icons.image_not_supported,
+                                    color: colors.onPrimaryContainer,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 8),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Text(
-                              product.name,
 
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: colors.onSurface,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  product.name,
+
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: colors.onSurface,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  'R\$ ${product.price}' +
+                                      ' /${product.unidade}',
+                                  style: TextStyle(
+                                    color: colors.secondary,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                final cartItem = CartItem.fromProduct(product);
+                                context.read<CartProvider>().adicionarItem(
+                                  cartItem,
+                                );
+                                // sua lógica de adicionar ao carrinho
+                                // ex: context.read<CartProvider>().addItem(product);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: colors.secondary,
+                                foregroundColor: colors.onSecondary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8,
+                                ),
+                              ),
+                              child: const Text(
+                                'Comprar',
+                                style: TextStyle(fontSize: 13),
                               ),
                             ),
                           ),

@@ -1,3 +1,5 @@
+import 'package:mercado_zap/models/product.dart';
+
 class CartItem {
   String id;
   String productId;
@@ -12,22 +14,32 @@ class CartItem {
     required this.quantity,
     required this.price,
   });
-  CartItem.formMap(Map<String, dynamic> map) 
+
+  // ← ADICIONE ISSO
+  factory CartItem.fromProduct(Product product) {
+    return CartItem(
+      id: DateTime.now().millisecondsSinceEpoch.toString(), // gera um id único
+      productId: product.id,
+      name: product.name,
+      price: product.price,
+      quantity: 1,
+    );
+  }
+
+  CartItem.formMap(Map<String, dynamic> map)
     : id = map['id'],
       productId = map['productId'],
       name = map['name'],
       quantity = map['quantity'],
       price = map['price'];
 
-    
-    Map<String, dynamic> toMap() {
-      return {
-        'id': id,
-        'productId': productId,
-        'name': name,
-        'quantity': quantity,
-        'price': price,
-      };
-    }
-  
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'productId': productId,
+      'name': name,
+      'quantity': quantity,
+      'price': price,
+    };
+  }
 }
