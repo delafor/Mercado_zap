@@ -22,19 +22,25 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final _productController = TextEditingController();
   late Box box;
-
+  String? _cachedLocation; // ✅ cache do endereço parseado
   @override
-  /*******  40817905-9eed-4a6a-bc3e-d7424a4713d7  *******/
   void initState() {
     super.initState();
     box = Hive.box('appBox');
+    _cachedLocation = _parseLocation(); // ✅ parseia 1x na inicialização
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ProductProvider>(context, listen: false).carregarProdutos();
     });
   }
 
-  String getLocation() {
+  @override
+  void dispose() {
+    _productController.dispose(); //evita memory leak
+    super.dispose();
+  }
+
+  String _parseLocation() {
     final data = box.get('addresses', defaultValue: <Map<String, dynamic>>[]);
     final adresses = (data as List)
         .map((item) => Address.fromMap(Map<String, dynamic>.from(item)))
@@ -85,229 +91,242 @@ class _HomePageState extends State<HomePage> {
         elevation: 5,
       ),
 
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      body: CustomScrollView(
+        slivers: [
+          // topo q some ao subir/ scrollar para cima
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
 
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                InkWell(
-                  onTap: () async {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AddLocalDialog(),
-                      ),
-                    );
-
-                    //set
-                  },
-
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 45,
-
-                        height: 45,
-                        decoration: BoxDecoration(
-                          color: colors.onSecondary,
-                          shape: BoxShape.circle,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  InkWell(
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AddLocalDialog(),
                         ),
-                        child: Icon(
-                          Icons.location_on,
+                      );
 
-                          color: theme.primaryColor,
-                          size: 30,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      ValueListenableBuilder(
-                        valueListenable: Hive.box(
-                          'appBox',
-                        ).listenable(keys: ['addresses']),
-                        builder: (context, Box box, _) {
-                          return Text(
-                            getLocation(),
-                            style: TextStyle(fontWeight: FontWeight.w500),
-                          );
-                        },
-                      ),
-
-                      Spacer(),
-                      const Icon(Icons.arrow_forward_ios),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-                Container(
-                  decoration: BoxDecoration(
-                    color: colors.primary,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-
-                  child: TextField(
-                    style: TextStyle(color: colors.onSurface),
-                    controller: _productController,
-                    onChanged: (value) {
-                      // setState(() {
-                      //   searchQuery = value;
-                      // });
-                      context.read<ProductProvider>().buscarProduto(value);
+                      //set
                     },
 
-                    decoration: InputDecoration(
-                      labelText: 'Search Anything...',
-                      labelStyle: TextStyle(color: theme.cardColor),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 45,
 
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: colors.primary),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                          height: 45,
+                          decoration: BoxDecoration(
+                            color: colors.onSecondary,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.location_on,
 
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: colors.primaryContainer),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                            color: theme.primaryColor,
+                            size: 30,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        ValueListenableBuilder<Box>(
+                          valueListenable: Hive.box(
+                            'appBox',
+                          ).listenable(keys: ['addresses']),
+                          builder: (context, Box box, _) {
+                            return Text(
+                              _parseLocation(),
+                              style: TextStyle(fontWeight: FontWeight.w500),
+                            );
+                          },
+                        ),
 
-                      prefixIcon: IconButton(
-                        icon: Icon(Icons.search, color: colors.secondary),
-                        onPressed: () {
-                          context.read<ProductProvider>().buscarProduto(
-                            _productController.text,
-                          );
-                        },
-                      ),
-
-                      hintText: 'Pesquisar no MercadoZap',
-                      floatingLabelStyle: TextStyle(
-                        color: colors.primaryContainer,
-                      ),
-
-                      contentPadding: EdgeInsets.symmetric(vertical: 16),
+                        Spacer(),
+                        const Icon(Icons.arrow_forward_ios),
+                      ],
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
 
-          const SizedBox(child: BannerCarousel()),
+          //Search fixa, so a barra de pesquisa ficará no topo da tela ao scrollar
+          SliverAppBar(
+            pinned: true,
+            automaticallyImplyLeading: false,
+            toolbarHeight: 85,
+            backgroundColor: theme.scaffoldBackgroundColor,
+            elevation: 0,
 
-          Expanded(
-            child: GridView.builder(
-              itemCount: products.products.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 5, // Espaçamento horizontal entre os itens
-                mainAxisSpacing: 5,
-                childAspectRatio:
-                    0.75, // <<< ESTA LINHA// Espaçamento vertical entre os itens),
-                // Define 2 colunas fixas
+            title: Container(
+              decoration: BoxDecoration(
+                color: colors.primary,
+                borderRadius: BorderRadius.circular(10),
               ),
-              itemBuilder: (context, index) {
+
+              child: TextField(
+                style: TextStyle(color: colors.onSurface),
+                controller: _productController,
+                onChanged: (value) {
+                  // setState(() {
+                  //   searchQuery = value;
+                  // });
+                  context.read<ProductProvider>().buscarProduto(value);
+                },
+
+                decoration: InputDecoration(
+                  labelText: 'Search Anything...',
+                  labelStyle: TextStyle(color: theme.cardColor),
+
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: colors.primary),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: colors.primaryContainer),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+
+                  prefixIcon: IconButton(
+                    icon: Icon(Icons.search, color: colors.secondary),
+                    onPressed: () {
+                      context.read<ProductProvider>().buscarProduto(
+                        _productController.text,
+                      );
+                    },
+                  ),
+
+                  hintText: 'Pesquisar no MercadoZap',
+                  floatingLabelStyle: TextStyle(color: colors.primaryContainer),
+
+                  contentPadding: EdgeInsets.symmetric(vertical: 16),
+                ),
+              ),
+            ),
+          ),
+
+          const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.only(top: 10),
+              child: BannerCarousel(),
+            ),
+          ),
+
+          // const SizedBox(child: BannerCarousel()),
+          SliverPadding(
+            padding: const EdgeInsets.all(8),
+
+            sliver: SliverGrid(
+              delegate: SliverChildBuilderDelegate((context, index) {
                 final product = products.products[index];
 
-                return SizedBox(
-                  height: 160,
-                  child: Card(
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.max,
+                return Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
 
-                        children: [
-                          const SizedBox(height: 4),
-                          Expanded(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.asset(
-                                'lib/assets/banner/baixados.jpg', // ajuste para o campo do seu modelo
-                                height: 130,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => Container(
-                                  height: 90,
-                                  color: colors.primaryContainer,
-                                  child: Icon(
-                                    Icons.image_not_supported,
-                                    color: colors.onPrimaryContainer,
-                                  ),
+                      children: [
+                        const SizedBox(height: 4),
+                        Expanded(
+                          flex: 3,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.asset(
+                              'lib/assets/banner/image1.png', // ajuste para o campo do seu modelo
+                              // height: 10,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => Container(
+                                color: colors.primaryContainer,
+                                child: Icon(
+                                  Icons.image_not_supported,
+                                  color: colors.onPrimaryContainer,
                                 ),
                               ),
                             ),
                           ),
-                          SizedBox(height: 8),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                        ),
+                        SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
 
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  product.name,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                product.name,
 
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: colors.onSurface,
-                                  ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: colors.onSurface,
                                 ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  'R\$ ${product.price}' +
-                                      ' /${product.unidade}',
-                                  style: TextStyle(
-                                    color: colors.secondary,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                final cartItem = CartItem.fromProduct(product);
-                                context.read<CartProvider>().adicionarItem(
-                                  cartItem,
-                                );
-                                // sua lógica de adicionar ao carrinho
-                                // ex: context.read<CartProvider>().addItem(product);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: colors.secondary,
-                                foregroundColor: colors.onSecondary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 8,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                'R\$ ${product.price}' + ' /${product.unidade}',
+                                style: TextStyle(
+                                  color: colors.secondary,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
                                 ),
                               ),
-                              child: const Text(
-                                'Comprar',
-                                style: TextStyle(fontSize: 13),
+                            ],
+                          ),
+                        ),
+
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              final cartItem = CartItem.fromProduct(product);
+                              context.read<CartProvider>().adicionarItem(
+                                cartItem,
+                              );
+
+                              print('Item adicionado ao carrinho');
+                              //lógica de adicionar ao carrinho
+                              // ex: context.read<CartProvider>().addItem(product);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: colors.secondary,
+                              foregroundColor: colors.onSecondary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                            ),
+                            child: const Text(
+                              'Adicionar ao Carrinho',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.white,
                               ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 );
-              },
+              }, childCount: products.products.length),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 5,
+                mainAxisSpacing: 5,
+                childAspectRatio: 0.75,
+              ),
             ),
           ),
         ],

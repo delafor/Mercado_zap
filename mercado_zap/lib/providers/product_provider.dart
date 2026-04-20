@@ -8,7 +8,7 @@ class ProductProvider with ChangeNotifier {
 
   List<Product> get products => List.unmodifiable(_products);
 
-  void carregarProdutos() {
+  void carregarProdutos () async {
     final data = ReadDatabase().readProducts();
     notifyListeners();
 
@@ -16,19 +16,19 @@ class ProductProvider with ChangeNotifier {
     _products = List.from(data);
   }
 
-  void adiconarProduto(Product product) {
+  void adiconarProduto(Product product) async {
     _products.add(product);
     _allproducts.add(product);
     notifyListeners();
   }
 
-  void removerProduto(Product product) {
+  void removerProduto(Product product) async{
     _allproducts.removeWhere((p) => p.id == product.id);
     _products.removeWhere((p) => p.id == product.id);
     notifyListeners();
   }
 
-  void buscarProduto(String query) {
+  void buscarProduto(String query) async{
     if (query.isEmpty) {
       _products = List.from(_allproducts);
     } else {

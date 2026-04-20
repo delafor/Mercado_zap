@@ -1,57 +1,58 @@
 import 'package:flutter/foundation.dart';
+import 'package:hive/hive.dart';
 import 'package:mercado_zap/models/cart_item.dart';
 
 class CartProvider with ChangeNotifier {
-  //cria o providedr e notifica a interface quando o carrinho mudar algo
-  final List<CartItem> _itens =
-      []; //Lista privada dos itens,ngm fora do providedr pode mexer direto nela
+  final Box _box = Hive.box('appBox');
 
-  List<CartItem> get itens => List.unmodifiable(
-    _itens,
-  ); // retorna os itens do carrinho somente para leitura
+  final List<CartItem> _itens = [];
+
+  List<CartItem> get itens => List.unmodifiable(_itens);
 
   double get total =>
       _itens.fold(0, (soma, item) => soma + (item.price * item.quantity));
 
-  //Metodos opcionais
-  //AdicionarItem - RemoverItem
-  void adicionarItem(CartItem item) {
-    // verificar se a o item no carrinho para ai sim poder adicionalo, caso ja tenha o item,aumenta a quantidade do item
-    final index = _itens.indexWhere((i) => i.productId == item.productId);
+  // ← CHAME ISSO NO INICIO DO APP
+  Future<void> carregarCarrinho() async {
+    final data = _box.get('carrinho', defaultValue: []);
+    _itens.clear();
+    _itens.addAll(
+      (data as List).map((e) => CartItem.formMap(Map<String, dynamic>.from(e))),
+    );
+    notifyListeners();
+  }
 
+  // ← SALVA NO HIVE SEMPRE QUE MUDAR
+  void _salvar() {
+    _box.put('carrinho', _itens.map((e) => e.toMap()).toList());
+  }
+
+  void adicionarItem(CartItem item) {
+    final index = _itens.indexWhere((i) => i.productId == item.productId);
     if (index >= 0) {
       _itens[index].quantity++;
     } else {
       _itens.add(item);
     }
+    _salvar(); // ← persiste
     notifyListeners();
   }
-  
-  //remover item(unidade)
 
   void removerItem(CartItem item) {
-    // verificar se a o item no carrinho para ai sim poder removelo
     final index = _itens.indexWhere((i) => i.productId == item.productId);
-    if (index < -1) return;
-
+    if (index < 0) return;
     if (_itens[index].quantity > 1) {
       _itens[index].quantity--;
     } else {
       _itens.removeAt(index);
     }
-
+    _salvar(); // ← persiste
     notifyListeners();
   }
-
-  //RemoverItemCompleto - remove todos os itens de uma vez do carrinho
-  void removerItemCompleto(CartItem item) {
-    _itens.removeWhere((i) => i.productId == item.productId);
-    notifyListeners();
-  }
-  //Calcular quantidaded total de itens no carrinho
 
   void limpar() {
     _itens.clear();
+    _salvar(); // ← persiste
     notifyListeners();
   }
 }
