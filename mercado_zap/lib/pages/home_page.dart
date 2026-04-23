@@ -178,7 +178,7 @@ class _HomePageState extends State<HomePage> {
                 },
 
                 decoration: InputDecoration(
-                  labelText: 'Search Anything...',
+                  labelText: 'Buscar produutos, categorias...',
                   labelStyle: TextStyle(color: theme.cardColor),
 
                   enabledBorder: OutlineInputBorder(
@@ -208,6 +208,8 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
+
+          //AQUI VAI SER A OPCAO DE ESCOLHER AS CATEGORIAS
 
           const SliverToBoxAdapter(
             child: Padding(
@@ -286,6 +288,39 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
 
+                        SizedBox(height: 15),
+                        SizedBox(
+                          height: 35,
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              final cartItem = CartItem.fromProduct(product);
+                              context.read<CartProvider>().adicionarItem(
+                                cartItem,
+                              );
+
+                              print('Item adicionado ao carrinho');
+                              //lógica de adicionar ao carrinho
+                              // ex: context.read<CartProvider>().addItem(product);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: colors.secondary,
+                              foregroundColor: colors.onSecondary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                            ),
+                            child: const Text(
+                              'Comprar',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
@@ -308,7 +343,7 @@ class _HomePageState extends State<HomePage> {
                               padding: const EdgeInsets.symmetric(vertical: 8),
                             ),
                             child: const Text(
-                              'Adicionar ao Carrinho',
+                              'Adicionar',
                               style: TextStyle(
                                 fontSize: 13,
                                 color: Colors.white,

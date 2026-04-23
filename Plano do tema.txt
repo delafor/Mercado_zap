@@ -1,0 +1,141 @@
+// GUIA DE USO DOS ESTILOS DO THEME
+// Para saber qual usar em cada lugar do app Mercado Zap
+
+Theme.of(context).textTheme.headlineLarge
+// TÍTULO GRANDE
+// Use em:
+// Splash screen
+// Nome do app
+// Promoções principais
+// Ex:
+// "Mercado Zap"
+
+Theme.of(context).textTheme.headlineMedium
+// TÍTULO MÉDIO
+// Use em:
+// Nome de páginas
+// Home
+// Carrinho
+// Checkout
+// Ex:
+// "Meu Carrinho"
+
+Theme.of(context).textTheme.titleLarge
+// SUBTÍTULO / PRODUTOS
+// Use em:
+// Nome do produto
+// Nome de seção
+// Card produto
+// Ex:
+// "Arroz Branco 5kg"
+
+Theme.of(context).textTheme.bodyLarge
+// TEXTO NORMAL IMPORTANTE
+// Use em:
+// Preço
+// Informações principais
+// Endereço
+// Ex:
+// "R$ 25,90"
+
+Theme.of(context).textTheme.bodyMedium
+// TEXTO SECUNDÁRIO
+// Use em:
+// Categoria
+// Unidade kg/l
+// Texto menor
+// Descrição curta
+// Ex:
+// "Entrega em 30 min"
+
+Theme.of(context).textTheme.labelLarge
+// TEXTO DE BOTÕES
+// Use em:
+// Comprar
+// Finalizar Pedido
+// Entrar
+// Ex:
+// "Comprar Agora"
+
+//////////////////////////////////////////////////////
+// BOTÕES
+//////////////////////////////////////////////////////
+
+ElevatedButton(
+// BOTÃO PRINCIPAL
+// Comprar
+// Finalizar compra
+// Login
+)
+
+OutlinedButton(
+// BOTÃO SECUNDÁRIO
+// Adicionar carrinho
+// Cancelar
+// Voltar
+)
+
+//////////////////////////////////////////////////////
+// CAMPOS
+//////////////////////////////////////////////////////
+
+TextField(
+// Barra pesquisa
+// Login
+// Cadastro
+)
+
+//////////////////////////////////////////////////////
+// CORES
+//////////////////////////////////////////////////////
+
+Theme.of(context).colorScheme.primary
+// Cor principal teal
+// Botões principais
+
+Theme.of(context).colorScheme.secondary
+// Cor laranja
+// Promoções / desconto
+
+Theme.of(context).colorScheme.surface
+// Branco
+// Cards / Containers
+
+Theme.of(context).colorScheme.error
+// Vermelho
+// Avisos / erro
+
+//////////////////////////////////////////////////////
+// EXEMPLO REAL CARD PRODUTO
+//////////////////////////////////////////////////////
+
+Column(
+ children: [
+
+Text(
+ "Arroz Branco 5kg",
+ style: Theme.of(context).textTheme.titleLarge,
+),
+
+Text(
+ "R$ 25,90",
+ style: Theme.of(context).textTheme.bodyLarge,
+),
+
+Text(
+ "Entrega rápida",
+ style: Theme.of(context).textTheme.bodyMedium,
+),
+
+ElevatedButton(
+ onPressed: () {},
+ child: Text("Comprar"),
+),
+
+OutlinedButton(
+ onPressed: () {},
+ child: Text("Carrinho"),
+),
+
+],
+)

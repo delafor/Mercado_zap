@@ -22,6 +22,10 @@ class CartProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  int get quantidadeTotal {
+    return _itens.fold(0, (soma, item) => soma + item.quantity); // eplicar melhhor
+  }
+
   // ← SALVA NO HIVE SEMPRE QUE MUDAR
   void _salvar() {
     _box.put('carrinho', _itens.map((e) => e.toMap()).toList());
