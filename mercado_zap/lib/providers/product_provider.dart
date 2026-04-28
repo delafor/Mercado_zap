@@ -5,10 +5,28 @@ import 'package:mercado_zap/models/product.dart';
 class ProductProvider with ChangeNotifier {
   List<Product> _allproducts = [];
   List<Product> _products = [];
+  String _selectedCategory = 'Todos';
+
+  String get selectedCategory => _selectedCategory;
 
   List<Product> get products => List.unmodifiable(_products);
 
-  void carregarProdutos () async {
+  void selecionarCategoria(String category) {
+    _selectedCategory = category;
+    notifyListeners();
+  }
+
+  List<Product> get productsFiltrados {
+    if (_selectedCategory == 'Todos') {
+      return _products;
+    }
+
+    return _products.where((produto) {
+      return produto.category == _selectedCategory;
+    }).toList();
+  }
+
+  void carregarProdutos() async {
     final data = ReadDatabase().readProducts();
     notifyListeners();
 
@@ -22,13 +40,13 @@ class ProductProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void removerProduto(Product product) async{
+  void removerProduto(Product product) async {
     _allproducts.removeWhere((p) => p.id == product.id);
     _products.removeWhere((p) => p.id == product.id);
     notifyListeners();
   }
 
-  void buscarProduto(String query) async{
+  void buscarProduto(String query) async {
     if (query.isEmpty) {
       _products = List.from(_allproducts);
     } else {
