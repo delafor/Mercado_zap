@@ -11,17 +11,34 @@ class CategoryCarousel extends StatelessWidget {
     final provider = context.watch<ProductProvider>();
     final List<String> categories = [
       'Todos',
-      'Grãos',
       'Mercearia',
+      'Hortifruti',
+      'Carnes',
       'Laticínios',
-      'Massas',
-      'Molhos',
-      'Bebidas',
-      'Óleos',
-      'Temperos', // colocar os filtros certos
-
       'Padaria',
+      'Bebidas',
+      'Limpeza',
+      'Higiene',
+      'Beleza e Cabelo',
+      'Pet',
+      'Congelados',
+      'Snacks',
     ];
+
+    final Map<String, IconData> categoryIcons = {
+      'Mercearia': Icons.shopping_basket,
+      'Hortifruti': Icons.eco,
+      'Carnes': Icons.set_meal,
+      'Laticínios': Icons.egg,
+      'Padaria': Icons.bakery_dining,
+      'Bebidas': Icons.local_drink,
+      'Limpeza': Icons.cleaning_services,
+      'Higiene': Icons.health_and_safety,
+      'Beleza e Cabelo': Icons.face,
+      'Pet': Icons.pets,
+      'Congelados': Icons.ac_unit,
+      'Snacks': Icons.fastfood,
+    };
 
     return SizedBox(
       height: 40,
@@ -52,6 +69,11 @@ class CategoryCarousel extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
 
                 children: [
+                  Icon(
+                    categoryIcons[category],
+                    color: isSelected ? Colors.white : Colors.black,
+                  ),
+                  const SizedBox(width: 5),
                   Text(
                     category,
                     style: TextStyle(
