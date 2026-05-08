@@ -16,13 +16,13 @@ class CartItem {
   });
 
   // ← ADICIONE ISSO
-  factory CartItem.fromProduct(Product product) {
+  factory CartItem.fromProduct(Product product, {int quantity = 1}) {
     return CartItem(
       id: DateTime.now().millisecondsSinceEpoch.toString(), // gera um id único
       productId: product.id,
       name: product.name,
       price: product.price,
-      quantity: 1,
+      quantity: quantity,
     );
   }
 

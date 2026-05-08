@@ -23,7 +23,10 @@ class CartProvider with ChangeNotifier {
   }
 
   int get quantidadeTotal {
-    return _itens.fold(0, (soma, item) => soma + item.quantity); // eplicar melhhor
+    return _itens.fold(
+      0,
+      (soma, item) => soma + item.quantity,
+    ); // eplicar melhhor
   }
 
   // ← SALVA NO HIVE SEMPRE QUE MUDAR
@@ -32,9 +35,11 @@ class CartProvider with ChangeNotifier {
   }
 
   void adicionarItem(CartItem item) {
-    final index = _itens.indexWhere((i) => i.productId == item.productId);
+    final index = _itens.indexWhere(
+      (i) => i.productId == item.productId,
+    ); //aqqui preciso passar a quantidade do contador la,pra marcar qquantos produtos vai pro carrinho
     if (index >= 0) {
-      _itens[index].quantity++;
+      _itens[index].quantity += item.quantity;
     } else {
       _itens.add(item);
     }

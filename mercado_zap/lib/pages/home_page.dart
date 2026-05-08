@@ -6,6 +6,7 @@ import 'package:mercado_zap/models/cart_item.dart';
 import 'package:mercado_zap/pages/dialog_local.dart';
 import 'package:mercado_zap/providers/product_provider.dart';
 import 'package:mercado_zap/widgets/BannerCarousel.dart';
+import 'package:mercado_zap/widgets/cardproduct.dart';
 import 'package:mercado_zap/widgets/categorycarousel.dart';
 import 'package:provider/provider.dart';
 import 'package:mercado_zap/providers/cart_provider.dart';
@@ -274,199 +275,204 @@ class _HomePageState extends State<HomePage> {
                   delegate: SliverChildBuilderDelegate((context, index) {
                     final product = products.productsFiltrados[index];
 
-                    return Card(
-                      elevation: 4,
+                    return GestureDetector(
+                      onTap: () {
+                        openProductSheet(context, product);
+                      },
+                      child: Card(
+                        elevation: 4,
 
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
 
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
 
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
 
-                          mainAxisSize: MainAxisSize.max,
+                            mainAxisSize: MainAxisSize.max,
 
-                          children: [
-                            const SizedBox(height: 4),
+                            children: [
+                              const SizedBox(height: 4),
 
-                            Expanded(
-                              flex: 3,
+                              Expanded(
+                                flex: 3,
 
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
 
-                                child: Image.asset(
-                                  'lib/assets/banner/image5.png',
+                                  child: Image.asset(
+                                    'lib/assets/banner/image5.png',
 
-                                  width: double.infinity,
+                                    width: double.infinity,
 
-                                  fit: BoxFit.cover,
+                                    fit: BoxFit.cover,
 
-                                  // cacheWidth: 120,
-                                  filterQuality: FilterQuality.low,
+                                    // cacheWidth: 120,
+                                    filterQuality: FilterQuality.low,
 
-                                  errorBuilder: (_, __, ___) => Container(
-                                    color: colors.primaryContainer,
+                                    errorBuilder: (_, __, ___) => Container(
+                                      color: colors.primaryContainer,
 
-                                    child: Icon(
-                                      Icons.image_not_supported,
+                                      child: Icon(
+                                        Icons.image_not_supported,
 
-                                      color: colors.onPrimaryContainer,
+                                        color: colors.onPrimaryContainer,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
 
-                            const SizedBox(height: 5),
+                              const SizedBox(height: 5),
 
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-
-                                children: [
-                                  Text(
-                                    product.name,
-
-                                    maxLines: 2,
-
-                                    overflow: TextOverflow.ellipsis,
-
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                      color: colors.onSurface,
-                                    ),
-                                  ),
-
-                                  const SizedBox(height: 2),
-
-                                  Text(
-                                    'R\$ ${product.price}/${product.unidade}',
-
-                                    style: TextStyle(
-                                      color: colors.secondary,
-
-                                      fontWeight: FontWeight.w600,
-
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            const SizedBox(height: 15),
-
-                            SizedBox(
-                              height: 35,
-                              width: double.infinity,
-
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  final cartItem = CartItem.fromProduct(
-                                    product,
-                                  );
-
-                                  context.read<CartProvider>().adicionarItem(
-                                    cartItem,
-                                  );
-                                },
-
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: colors.secondary,
-
-                                  foregroundColor: colors.onSecondary,
-
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 8,
-                                  ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
                                 ),
 
-                                child: const Text(
-                                  'Comprar',
-
-                                  style: TextStyle(
-                                    fontSize: 16,
-
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-
-                            const SizedBox(height: 5),
-
-                            SizedBox(
-                              height: 35,
-                              width: double.infinity,
-
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  final cartItem = CartItem.fromProduct(
-                                    product,
-                                  );
-
-                                  context.read<CartProvider>().adicionarItem(
-                                    cartItem,
-                                  );
-                                },
-
-                                style: ElevatedButton.styleFrom(
-                                  foregroundColor: colors.onSecondary,
-
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6),
-
-                                    side: BorderSide(color: colors.secondary),
-                                  ),
-
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 8,
-                                  ),
-                                ),
-
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
 
                                   children: [
-                                    Image.asset(
-                                      'lib/assets/Icons/cartIcon.png',
+                                    Text(
+                                      product.name,
 
-                                      width: 18,
-                                      height: 18,
+                                      maxLines: 2,
 
-                                      cacheWidth: 60,
+                                      overflow: TextOverflow.ellipsis,
+
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        color: colors.onSurface,
+                                      ),
                                     ),
-                                    const SizedBox(width: 5),
+
+                                    const SizedBox(height: 2),
 
                                     Text(
-                                      'Adicionar',
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                      style: TextStyle(
-                                        fontSize: 16,
+                                      'R\$ ${product.price}/${product.unidade}',
 
+                                      style: TextStyle(
                                         color: colors.secondary,
+
+                                        fontWeight: FontWeight.w600,
+
+                                        fontSize: 18,
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
-                          ],
+
+                              const SizedBox(height: 15),
+
+                              SizedBox(
+                                height: 35,
+                                width: double.infinity,
+
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    final cartItem = CartItem.fromProduct(
+                                      product,
+                                    );
+
+                                    context.read<CartProvider>().adicionarItem(
+                                      cartItem,
+                                    );
+                                  },
+
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: colors.secondary,
+
+                                    foregroundColor: colors.onSecondary,
+
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 8,
+                                    ),
+                                  ),
+
+                                  child: const Text(
+                                    'Comprar',
+
+                                    style: TextStyle(
+                                      fontSize: 16,
+
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              const SizedBox(height: 5),
+
+                              SizedBox(
+                                height: 35,
+                                width: double.infinity,
+
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    final cartItem = CartItem.fromProduct(
+                                      product,
+                                    );
+
+                                    context.read<CartProvider>().adicionarItem(
+                                      cartItem,
+                                    );
+                                  },
+
+                                  style: ElevatedButton.styleFrom(
+                                    foregroundColor: colors.onSecondary,
+
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(6),
+
+                                      side: BorderSide(color: colors.secondary),
+                                    ),
+
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 8,
+                                    ),
+                                  ),
+
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+
+                                    children: [
+                                      Image.asset(
+                                        'lib/assets/Icons/cartIcon.png',
+
+                                        width: 18,
+                                        height: 18,
+
+                                        cacheWidth: 60,
+                                      ),
+                                      const SizedBox(width: 5),
+
+                                      Text(
+                                        'Adicionar',
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        style: TextStyle(
+                                          fontSize: 16,
+
+                                          color: colors.secondary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     );

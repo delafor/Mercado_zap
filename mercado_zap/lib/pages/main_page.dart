@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mercado_zap/pages/cart_page.dart';
 import 'package:mercado_zap/pages/checkout_page.dart';
 import 'package:mercado_zap/pages/home_page.dart';
+import 'package:mercado_zap/pages/pedidos.dart';
 import 'package:mercado_zap/providers/product_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:mercado_zap/providers/cart_provider.dart';
@@ -15,7 +16,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _currentIndex = 0;
-  final List<Widget> _telas = [HomePage(), CartPage()];
+  final List<Widget> _telas = [HomePage(), CartPage(), PedidosPage()];
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<CartProvider>(context);
@@ -39,6 +40,7 @@ class _MainPageState extends State<MainPage> {
         },
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+
           BottomNavigationBarItem(
             icon: Stack(
               clipBehavior: Clip.none,
@@ -64,6 +66,10 @@ class _MainPageState extends State<MainPage> {
               ],
             ),
             label: 'Carrinho',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.badge_sharp),
+            label: 'Pedidos',
           ),
         ],
       ),
