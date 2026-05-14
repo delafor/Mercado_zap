@@ -382,8 +382,7 @@ class _HomePageState extends State<HomePage> {
                                   onPressed: () {
                                     // final cartItem = CartItem.fromProduct(
                                     //   product,
-                                    // );
-
+                                    // )
                                     // context.read<CartProvider>().adicionarItem(
                                     //   cartItem,
                                     // );
