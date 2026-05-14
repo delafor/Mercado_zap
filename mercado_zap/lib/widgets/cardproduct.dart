@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mercado_zap/models/cart_item.dart';
 import 'package:mercado_zap/models/product.dart';
+import 'package:mercado_zap/pages/checkout_page.dart';
 import 'package:mercado_zap/providers/cart_provider.dart';
 import 'package:mercado_zap/widgets/counter.dart';
 import 'package:provider/provider.dart';
+import 'package:mercado_zap/utils/image_helper.dart';
 
 class ProductSheet extends StatefulWidget {
   final Product product;
@@ -70,7 +72,15 @@ class _ProductSheetState extends State<ProductSheet> {
 
           const SizedBox(height: 10),
 
-          Image.asset('lib/assets/banner/image5.png', height: 150),
+          Image.asset(
+            widget.product.urlImagem ?? '',
+            height: 150,
+            fit: BoxFit.contain,
+
+            errorBuilder: (_, __, ___) {
+              return const Icon(Icons.image_not_supported, size: 80);
+            },
+          ),
 
           const SizedBox(height: 15),
 
@@ -162,15 +172,19 @@ class _ProductSheetState extends State<ProductSheet> {
                 SizedBox(height: 15),
                 ElevatedButton(
                   onPressed: () {
-                    final cartItem = CartItem.fromProduct(
-                      widget.product,
-                      quantity: quantity,
+                    // final cartItem = CartItem.fromProduct(
+                    //   widget.product,
+                    //   quantity: quantity,
+                    // );
+                    // context.read<CartProvider>().adicionarItem(cartItem);
+                    // setState(() {
+                    //   quantity = 1;
+                    // });
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CheckoutPage()),
                     );
-                    context.read<CartProvider>().adicionarItem(cartItem);
-                    setState(() {
-                      quantity = 1;
-                    });
-                  
                   },
 
                   style: ElevatedButton.styleFrom(

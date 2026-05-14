@@ -13,15 +13,16 @@ import 'providers/cart_provider.dart';
 import 'providers/product_provider.dart';
 import 'providers/pdv_provider.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-
- await Hive.initFlutter();
+  await Hive.initFlutter();
 
   await Hive.openBox('appBox');
-  await Hive.openBox<Address>('addresses');
 
+  await Hive.openBox<Address>('addresses');
+  await Hive.box('appBox').clear(); // ← limpa TUDO do appBox
   await SeedDatabase.seed();
 
   runApp(
@@ -50,10 +51,5 @@ class MyApp extends StatelessWidget {
       theme: AppThemes.light(),
       home: MainPage(),
     );
-
-    
   }
-
-
-
 }

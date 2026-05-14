@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:mercado_zap/models/Address.dart';
 import 'package:mercado_zap/models/cart_item.dart';
+import 'package:mercado_zap/pages/checkout_page.dart';
 import 'package:mercado_zap/pages/dialog_local.dart';
 import 'package:mercado_zap/providers/product_provider.dart';
 import 'package:mercado_zap/widgets/BannerCarousel.dart';
@@ -99,7 +100,7 @@ class _HomePageState extends State<HomePage> {
         leading: Padding(
           padding: const EdgeInsets.all(3),
           child: Image.asset(
-            'lib/assets/logo/logo01.png',
+            'assets/logo/logo01.png',
             cacheWidth: 120, // ✅ imagem mais leve
           ),
         ),
@@ -127,6 +128,9 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   InkWell(
                     onTap: () async {
+                      // if (_cachedLocation != null) return;
+                      //Logica se quiser editar o endereço
+
                       await Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -304,7 +308,7 @@ class _HomePageState extends State<HomePage> {
                                   borderRadius: BorderRadius.circular(8),
 
                                   child: Image.asset(
-                                    'lib/assets/banner/image5.png',
+                                    product.urlImagem ?? '',
 
                                     width: double.infinity,
 
@@ -376,12 +380,19 @@ class _HomePageState extends State<HomePage> {
 
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    final cartItem = CartItem.fromProduct(
-                                      product,
-                                    );
+                                    // final cartItem = CartItem.fromProduct(
+                                    //   product,
+                                    // );
 
-                                    context.read<CartProvider>().adicionarItem(
-                                      cartItem,
+                                    // context.read<CartProvider>().adicionarItem(
+                                    //   cartItem,
+                                    // );
+
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => CheckoutPage(),
+                                      ),
                                     );
                                   },
 
@@ -448,7 +459,7 @@ class _HomePageState extends State<HomePage> {
 
                                     children: [
                                       Image.asset(
-                                        'lib/assets/Icons/cartIcon.png',
+                                        'assets/Icons/cartIcon.png',
 
                                         width: 18,
                                         height: 18,

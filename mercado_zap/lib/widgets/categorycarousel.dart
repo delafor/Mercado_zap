@@ -26,6 +26,7 @@ class CategoryCarousel extends StatelessWidget {
     ];
 
     final Map<String, IconData> categoryIcons = {
+      'Todos': Icons.window,
       'Mercearia': Icons.shopping_basket,
       'Hortifruti': Icons.eco,
       'Carnes': Icons.set_meal,

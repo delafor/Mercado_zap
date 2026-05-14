@@ -28,10 +28,14 @@ class ProductProvider with ChangeNotifier {
 
   void carregarProdutos() async {
     final data = ReadDatabase().readProducts();
-    notifyListeners();
+
+    for (var p in data) {
+      print('PRODUTO: ${p.name} | IMAGEM: ${p.urlImagem}');
+    }
 
     _allproducts = List.from(data);
     _products = List.from(data);
+    notifyListeners();
   }
 
   void adiconarProduto(Product product) async {

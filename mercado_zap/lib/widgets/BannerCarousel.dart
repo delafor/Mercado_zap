@@ -10,11 +10,11 @@ class BannerCarousel extends StatefulWidget {
 class _BannerCarouselState extends State<BannerCarousel> {
   late final PageController controller;
   static const List<String> images = [
-    'lib/assets/banner/image1.png',
-    'lib/assets/banner/image2.jpg',
-    'lib/assets/banner/image3.png',
-    'lib/assets/banner/image4.png',
-    'lib/assets/banner/image5.png',
+    'assets/banner/image1.png',
+    'assets/banner/image2.jpg',
+    'assets/banner/image3.png',
+    'assets/banner/image4.png',
+    'assets/banner/image5.png',
     // 'lib/assets/banner/image5.png',
   ];
 

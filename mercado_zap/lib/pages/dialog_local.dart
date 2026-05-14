@@ -3,7 +3,7 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
-import 'package:mercado_zap/models/address.dart';
+import 'package:mercado_zap/models/Address.dart';
 import 'package:mercado_zap/widgets/checkbox.dart';
 import 'package:mercado_zap/widgets/customformfield.dart';
 
@@ -78,7 +78,6 @@ class _AddLocalDialogState extends State<AddLocalDialog> {
     if (_formKey.currentState!.validate()) {
       await saveAddress();
 
-      
       Navigator.pop(context, true);
     }
   }
@@ -146,7 +145,6 @@ class _AddLocalDialogState extends State<AddLocalDialog> {
                           } else {
                             _erroNumberCasa = null;
                           }
-                      
                         });
                       },
 
@@ -214,7 +212,6 @@ class _AddLocalDialogState extends State<AddLocalDialog> {
 
                 onChanged: (value) {
                   setState(() {
-                
                     if (value.length > 11) {
                       _erroTelefone = 'Insira no máximo 11 dígitos';
                     } else {
