@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:mercado_zap/Payments/checkout_payment_page.dart';
 import 'package:mercado_zap/models/Address.dart';
 import 'package:mercado_zap/models/cart_item.dart';
-import 'package:mercado_zap/pages/checkout_page.dart';
+
 import 'package:mercado_zap/pages/dialog_local.dart';
 import 'package:mercado_zap/providers/product_provider.dart';
 import 'package:mercado_zap/widgets/BannerCarousel.dart';
@@ -51,9 +52,10 @@ class _HomePageState extends State<HomePage> {
   String _parseLocation() {
     final data = box.get('addresses', defaultValue: <Map<String, dynamic>>[]);
 
-    final adresses = (data as List)
-        .map((item) => Address.fromMap(Map<String, dynamic>.from(item)))
-        .toList();
+    final adresses =
+        (data as List)
+            .map((item) => Address.fromMap(Map<String, dynamic>.from(item)))
+            .toList();
 
     if (adresses.isEmpty) {
       return 'Adicione um endereço';
@@ -89,10 +91,7 @@ class _HomePageState extends State<HomePage> {
                 text: 'Hyper',
                 style: TextStyle(color: colors.onPrimary),
               ),
-              TextSpan(
-                text: 'Mart',
-                style: TextStyle(color: colors.secondary),
-              ),
+              TextSpan(text: 'Mart', style: TextStyle(color: colors.secondary)),
             ],
           ),
         ),
@@ -317,15 +316,16 @@ class _HomePageState extends State<HomePage> {
                                     // cacheWidth: 120,
                                     filterQuality: FilterQuality.low,
 
-                                    errorBuilder: (_, __, ___) => Container(
-                                      color: colors.primaryContainer,
+                                    errorBuilder:
+                                        (_, __, ___) => Container(
+                                          color: colors.primaryContainer,
 
-                                      child: Icon(
-                                        Icons.image_not_supported,
+                                          child: Icon(
+                                            Icons.image_not_supported,
 
-                                        color: colors.onPrimaryContainer,
-                                      ),
-                                    ),
+                                            color: colors.onPrimaryContainer,
+                                          ),
+                                        ),
                                   ),
                                 ),
                               ),
@@ -380,21 +380,33 @@ class _HomePageState extends State<HomePage> {
 
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    // final cartItem = CartItem.fromProduct(
-                                    //   product,
-                                    // )
-                                    // context.read<CartProvider>().adicionarItem(
-                                    //   cartItem,
-                                    // );
-
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => CheckoutPage(),
+                                        builder:
+                                            (_) => CheckoutPaymentPage(
+                                              total: product.price,
+                                            ),
                                       ),
                                     );
                                   },
 
+                                  // onPressed: () {
+                                  // final cartItem = CartItem.fromProduct(
+                                  //   product,
+                                  // )
+                                  // context.read<CartProvider>().adicionarItem(
+                                  //   cartItem,
+                                  // );
+
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) => CheckoutPage(),
+                                  //   ),
+                                  // );
+
+                                  //  },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: colors.secondary,
 

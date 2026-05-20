@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mercado_zap/pages/cart_page.dart';
-import 'package:mercado_zap/pages/checkout_page.dart';
+
 import 'package:mercado_zap/pages/home_page.dart';
 import 'package:mercado_zap/pages/pedidos.dart';
-import 'package:mercado_zap/providers/product_provider.dart';
-import 'package:provider/provider.dart';
+
 import 'package:mercado_zap/providers/cart_provider.dart';
+import 'package:provider/provider.dart';
 
 class MainPage extends StatefulWidget {
   // const MainPage({Key? key}) : super(key: key);

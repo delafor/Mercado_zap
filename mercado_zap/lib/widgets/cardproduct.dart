@@ -1,12 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:mercado_zap/Payments/checkout_payment_page.dart';
 import 'package:mercado_zap/models/cart_item.dart';
 import 'package:mercado_zap/models/product.dart';
-import 'package:mercado_zap/pages/checkout_page.dart';
+
 import 'package:mercado_zap/providers/cart_provider.dart';
 import 'package:mercado_zap/widgets/counter.dart';
 import 'package:provider/provider.dart';
-import 'package:mercado_zap/utils/image_helper.dart';
 
 class ProductSheet extends StatefulWidget {
   final Product product;
@@ -183,7 +182,10 @@ class _ProductSheetState extends State<ProductSheet> {
 
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => CheckoutPage()),
+                      MaterialPageRoute(
+                        builder:
+                            (context) => CheckoutPaymentPage(total: subtotal),
+                      ),
                     );
                   },
 
