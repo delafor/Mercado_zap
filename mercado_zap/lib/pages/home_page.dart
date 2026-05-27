@@ -386,27 +386,19 @@ class _HomePageState extends State<HomePage> {
                                         builder:
                                             (_) => CheckoutPaymentPage(
                                               total: product.price,
+                                              produtos: [
+                                                CartItem(
+                                                  productId: product.id,
+                                                  name: product.name,
+                                                  price: product.price,
+                                                  quantity: 1, id: '',
+                                                ),
+                                              ],
                                             ),
                                       ),
                                     );
                                   },
 
-                                  // onPressed: () {
-                                  // final cartItem = CartItem.fromProduct(
-                                  //   product,
-                                  // )
-                                  // context.read<CartProvider>().adicionarItem(
-                                  //   cartItem,
-                                  // );
-
-                                  // Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) => CheckoutPage(),
-                                  //   ),
-                                  // );
-
-                                  //  },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: colors.secondary,
 

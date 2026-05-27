@@ -22,9 +22,11 @@ void main() async {
   await Hive.openBox('appBox');
 
   await Hive.openBox<Address>('addresses');
-  await Hive.box('appBox').clear(); // ← limpa TUDO do appBox
+  // await Hive.box('appBox').clear(); // ← limpa TUDO do appBox
   await SeedDatabase.seed();
+  final cartProvider = CartProvider();
 
+  await cartProvider.carregarCarrinho();
   runApp(
     MultiProvider(
       providers: [
