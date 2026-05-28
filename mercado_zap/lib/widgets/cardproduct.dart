@@ -46,6 +46,7 @@ class _ProductSheetState extends State<ProductSheet> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
+
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -171,20 +172,23 @@ class _ProductSheetState extends State<ProductSheet> {
                 SizedBox(height: 15),
                 ElevatedButton(
                   onPressed: () {
-                    // final cartItem = CartItem.fromProduct(
-                    //   widget.product,
-                    //   quantity: quantity,
-                    // );
-                    // context.read<CartProvider>().adicionarItem(cartItem);
-                    // setState(() {
-                    //   quantity = 1;
-                    // });
-
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder:
-                            (context) => CheckoutPaymentPage(total: subtotal),
+                            (context) => CheckoutPaymentPage(
+                              total: widget.product.price * quantity,
+
+                              produtos: [
+                                CartItem(
+                                  productId: widget.product.id,
+                                  name: widget.product.name,
+                                  price: widget.product.price,
+                                  quantity: quantity,
+                                  id: '',
+                                ),
+                              ],
+                            ),
                       ),
                     );
                   },

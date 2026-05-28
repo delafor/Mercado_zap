@@ -3,23 +3,34 @@ import 'package:mercado_zap/models/cart_item.dart';
 import 'package:mercado_zap/providers/cart_provider.dart';
 import 'package:mercado_zap/providers/product_provider.dart';
 import 'package:mercado_zap/widgets/choose_payment.dart';
+import 'package:mercado_zap/widgets/info_row.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../providers/payment_provider.dart';
 import 'pix_payment_page.dart';
 
-class CheckoutPaymentPage extends StatelessWidget {
+class CheckoutPaymentPage extends StatefulWidget {
   final double total;
   final List<CartItem>? produtos;
 
   const CheckoutPaymentPage({super.key, this.produtos, required this.total});
+  _CheckoutPaymentPage createState() => _CheckoutPaymentPage();
+}
+
+class _CheckoutPaymentPage extends State<CheckoutPaymentPage> {
+  String selectedPayment = 'PIX';
+  double taxaEntrega = 3;
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
     final cartProvider = context.watch<CartProvider>();
     final paymentProvider = context.watch<PaymentProvider>();
-    final itens = produtos ?? cartProvider.itens;
-    print(cartProvider.itens.length);
+    final itens = widget.produtos ?? cartProvider.itens;
+    double totalFinal = widget.total + taxaEntrega;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Pagamento')),
       body: Padding(
@@ -80,7 +91,7 @@ class CheckoutPaymentPage extends StatelessWidget {
                                 ),
 
                                 Text(
-                                  " R\$ ${total.toStringAsFixed(2)}",
+                                  " R\$ ${widget.total.toStringAsFixed(2)}",
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
@@ -120,101 +131,120 @@ class CheckoutPaymentPage extends StatelessWidget {
                   const SizedBox(height: 10),
 
                   ChoosePayment(
-                    text: "PIX",
+                    title: "PIX",
+                    subtitle: 'Pagamento instantâneo',
                     icon: Icons.pix,
-                    cor: Colors.green,
+                    iconColor: Colors.green,
 
-                    onPressed: () async {
-                      await paymentProvider.createPayment(amount: total);
+                    isSelected: selectedPayment == 'PIX',
 
-                      if (!context.mounted) return;
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const PixPaymentPage(),
-                        ),
-                      );
+                    onChanged: (value) {
+                      setState(() {
+                        selectedPayment = 'PIX';
+                      });
                     },
                   ),
 
                   const SizedBox(height: 10),
 
                   ChoosePayment(
-                    text: "Cartão",
+                    title: "Cartão de crédito",
+                    subtitle: 'Pague em até 3x sem juros',
                     icon: Icons.card_giftcard,
-                    cor: Colors.green,
+                    iconColor: Colors.black,
+                    isSelected: selectedPayment == 'cartao',
+
+                    onChanged: (value) {
+                      setState(() {
+                        selectedPayment = 'Cartão';
+                      });
+                    },
 
                     onPressed: () async {},
                   ),
                 ],
               ),
             ),
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.all(16),
+
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 5)],
+              ),
+
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+
+                children: [
+                  Text(
+                    'Resumo do pagamento',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  InfoRow(
+                    text: "Subtotal",
+                    valor: 'R\$ ${widget.total.toStringAsFixed(2)}',
+                  ),
+                  InfoRow(
+                    text: 'Entrega',
+                    valor: 'R\$ ${taxaEntrega.toStringAsFixed(2)}',
+                  ),
+                  Divider(thickness: 1, color: Colors.grey),
+
+                  InfoRow(
+                    total: 'Total',
+                    valorTotal: 'R\$ ${totalFinal.toStringAsFixed(2)}',
+                  ),
+
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (selectedPayment == 'PIX') {
+                        await paymentProvider.createPayment(amount: totalFinal);
+
+                        if (!context.mounted) return;
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const PixPaymentPage(),
+                          ),
+                        );
+                      }
+                    },
+
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: colors.secondary,
+                      minimumSize: const Size(double.infinity, 60),
+                      foregroundColor: colors.onSecondary,
+
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+
+                        side: BorderSide(color: colors.secondary),
+                      ),
+
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                    ),
+                    child: Text(
+                      'Pagar com ${selectedPayment}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                        color: colors.primary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class InfoRow extends StatelessWidget {
-  final String text;
-  final String quantidade;
-  final String valor;
-
-  const InfoRow({
-    super.key,
-    required this.quantidade,
-    required this.text,
-    required this.valor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-        children: [
-          Expanded(
-            child: Row(
-              children: [
-                Text(
-                  quantidade,
-
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                ),
-                SizedBox(width: 10),
-                Text(
-                  text,
-
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // TITULO
-          Text(
-            valor,
-
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
-            ),
-          ),
-        ],
       ),
     );
   }
