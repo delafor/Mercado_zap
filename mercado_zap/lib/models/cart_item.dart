@@ -6,6 +6,7 @@ class CartItem {
   String name;
   int quantity;
   double price;
+  String? urlImagem;
 
   CartItem({
     required this.id,
@@ -13,6 +14,7 @@ class CartItem {
     required this.name,
     required this.quantity,
     required this.price,
+    this.urlImagem,
   });
 
   // ← ADICIONE ISSO
@@ -23,6 +25,7 @@ class CartItem {
       name: product.name,
       price: product.price,
       quantity: quantity,
+      urlImagem: product.urlImagem,
     );
   }
 
@@ -31,7 +34,8 @@ class CartItem {
       productId = map['productId'],
       name = map['name'],
       quantity = map['quantity'],
-      price = map['price'];
+      price = map['price'],
+      urlImagem = map['urlImagem'];
 
   Map<String, dynamic> toMap() {
     return {
@@ -40,6 +44,7 @@ class CartItem {
       'name': name,
       'quantity': quantity,
       'price': price,
+      'urlImagem': urlImagem,
     };
   }
 }

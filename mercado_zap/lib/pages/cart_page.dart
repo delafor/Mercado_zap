@@ -1,8 +1,14 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mercado_zap/Payments/checkout_payment_page.dart';
+import 'package:mercado_zap/pages/home_page.dart';
 import 'package:mercado_zap/providers/cart_provider.dart';
+import 'package:mercado_zap/widgets/choose_payment.dart';
+import 'package:mercado_zap/widgets/counter.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mercado_zap/widgets/cardproduct.dart'; // import 'package:mercado_zap/widgets/cardproduct.dart/'
 
 class CartPage extends StatefulWidget {
   @override
@@ -10,84 +16,212 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
+  int quantity = 1;
+
+  void increase() {
+    setState(() {
+      quantity++;
+    });
+  }
+
+  void decrease() {
+    if (quantity > 1) {
+      setState(() {
+        quantity--;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
     // context.watch fica "escutando" o CartProvider
     // toda vez que notifyListeners() for chamado, a tela reconstrói automaticamente
     final cart = context.watch<CartProvider>();
 
     return Scaffold(
+      appBar: AppBar(
+        // leading: IconButton(
+        //   icon: const Icon(Icons.arrow_back),
+        //   onPressed: () => Navigator.pop(context),
+        // ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Meu carrinho',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              '${cart.totalItens} itens',
+              style: const TextStyle(fontSize: 14),
+            ),
+          ],
+        ),
+        actions: [
+          if (cart.itens.isNotEmpty)
+            IconButton(
+              icon: SvgPicture.asset(
+                'assets/Icons/lixeira.svg',
+                width: 24,
+                height: 24,
+              ),
+              onPressed: () {
+                cart.limpar();
+              },
+            ),
+        ],
+      ),
       body:
           // cart.itens é a lista de itens do carrinho
           // .isEmpty verifica se a lista está vazia
           // se vazia, mostra mensagem, senão mostra a lista
           cart.itens.isEmpty
               ? Center(child: Text('Carrinho vazio'))
-              : ListView.builder(
+              : ListView.separated(
+                separatorBuilder: (BuildContext context, int index) {
+                  return const Divider(
+                    thickness: 1,
+                    height: 1,
+                    color: Colors.grey,
+                  );
+                },
                 // cart.itens.length define quantos itens o ListView vai renderizar
                 itemCount: cart.itens.length,
                 itemBuilder: (context, index) {
                   // busca o item da posição atual da lista
                   final item = cart.itens[index];
 
-                  return Card(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-
-                      // exibe o nome do produto
-                    ),
-
+                  return Container(
                     child: Padding(
                       padding: const EdgeInsets.all(12),
-                      child: Column(
-                        children: [
-                          Text(
-                            item.name,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+
+                      child: IntrinsicHeight(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+
+                          children: [
+                            Image.asset(
+                              item.urlImagem ?? '',
+                              width: 80,
+                              height: 80,
+                              filterQuality: FilterQuality.high,
                             ),
-                          ),
-                          Text(
-                            'R\$ ${(item.price * item.quantity).toStringAsFixed(2)}',
-                          ),
-                        ],
+                            VerticalDivider(thickness: 1.5, width: 18),
+
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+
+                              children: [
+                                Text(
+                                  item.name,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                Text(
+                                  'R\$ ${(item.price * item.quantity).toStringAsFixed(2)}',
+                                ),
+                                Transform.scale(
+                                  scale: 0.8,
+                                  child: CounterWidget(
+                                    counter: item.quantity,
+                                    onIncrease: () {
+                                      cart.adicionarItem(item);
+                                    },
+                                    onDecrease: () {
+                                      cart.removerItem(item);
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Spacer(),
+                            IconButton(
+                              icon: SvgPicture.asset(
+                                'assets/Icons/lixeira.svg',
+                                width: 24,
+                                height: 24,
+                              ),
+                              onPressed: () {
+                                cart.removerProduto(item);
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );
                 },
               ),
 
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.all(16),
+      bottomNavigationBar:
+          cart.itens.isNotEmpty
+              ? Padding(
+                padding: EdgeInsets.all(16),
 
-        child: SizedBox(
-          width: double.infinity,
-          height: 50,
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 50,
 
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => CheckoutPaymentPage(total: cart.total),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => CheckoutPaymentPage(total: cart.total),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: colors.secondary,
+                      minimumSize: const Size(double.infinity, 60),
+                      foregroundColor: colors.onSecondary,
+
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+
+                        side: BorderSide(color: colors.secondary),
+                      ),
+
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                    ),
+                    child: Text(
+                      'Comprar agora',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                        color: colors.primary,
+                      ),
+                    ),
+                  ),
+                  // child: ElevatedButton(
+                  //   onPressed: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder:
+                  //             (_) => CheckoutPaymentPage(total: cart.total),
+                  //       ),
+                  //     );
+                  //   },
+
+                  //   style: ElevatedButton.styleFrom(
+                  //     backgroundColor: Colors.green,
+                  //     foregroundColor: Colors.white,
+                  //   ),
+
+                  //   child: const Text(
+                  //     'Finalizar Compra',
+                  //     style: TextStyle(fontSize: 16),
+                  //   ),
+                  // ),
                 ),
-              );
-            },
-
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              foregroundColor: Colors.white,
-            ),
-
-            child: const Text(
-              'Finalizar Compra',
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-        ),
-      ),
+              )
+              : null,
     );
   }
 }

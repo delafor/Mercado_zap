@@ -9,7 +9,8 @@ import '../providers/payment_provider.dart';
 import 'success_payment_page.dart';
 
 class PixPaymentPage extends StatefulWidget {
-  const PixPaymentPage({super.key});
+  final double amount;
+  const PixPaymentPage({super.key, required this.amount});
 
   @override
   State<PixPaymentPage> createState() => _PixPaymentPageState();
@@ -20,19 +21,18 @@ class _PixPaymentPageState extends State<PixPaymentPage> {
   void initState() {
     super.initState();
 
-    final provider = context.read<PaymentProvider>();
+    Future.microtask(() async {
+      final provider = context.read<PaymentProvider>();
 
-    provider.startChecking();
+      await provider.createPayment(amount: widget.amount);
+
+      provider.startChecking();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<PaymentProvider>();
-
-    final cleanBase64 = provider.qrCode.replaceAll(
-      'data:image/png;base64,',
-      '',
-    );
 
     if (provider.approved) {
       Future.microtask(() {
@@ -41,6 +41,9 @@ class _PixPaymentPageState extends State<PixPaymentPage> {
           MaterialPageRoute(builder: (_) => const SuccessPaymentPage()),
         );
       });
+    }
+    if (provider.loading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(

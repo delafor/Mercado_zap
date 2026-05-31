@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.mercado_zap"
+    namespace = "com.mercadozap.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -16,7 +16,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.mercado_zap"
+        applicationId = "com.mercadozap.app"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

@@ -5,28 +5,18 @@ import 'package:http/http.dart' as http;
 class PaymentService {
   final String baseUrl = 'http://192.168.0.108:3000';
 
-  Future<Map<String, dynamic>> createPixPayment(
-    double amount,
-  ) async {
+  Future<Map<String, dynamic>> createPixPayment(double amount) async {
     final response = await http.post(
       Uri.parse('$baseUrl/payments/pix'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'amount': amount,
-      }),
-    );
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'amount': amount}),
+    ); // aqui eu posso colocar um timeout pq se o backend travar o app n fica preso
 
     return jsonDecode(response.body);
   }
 
-  Future<Map<String, dynamic>> checkPayment(
-    String id,
-  ) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/payments/$id'),
-    );
+  Future<Map<String, dynamic>> checkPayment(String id) async {
+    final response = await http.get(Uri.parse('$baseUrl/payments/$id'));
 
     return jsonDecode(response.body);
   }

@@ -16,7 +16,7 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   path_provider: ^2.1.5
-  google_maps_flutter: ^2.14.0
+
   firebase_core: ^4.9.0
   firebase_storage: ^13.0.5
   cloud_firestore: ^6.4.1
@@ -29,6 +29,7 @@ dependencies:
   lottie: ^3.3.3
   pretty_qr_code: ^3.6.0
   clipboard: ^3.0.14
+  flutter_svg: ^2.3.0
   # abacatepay: ^1.0.2+7
 
 dev_dependencies:
@@ -51,6 +52,7 @@ flutter:
     - assets/banner/image5.png
     - assets/banner/baixados.jpg
     - assets/Icons/cartIcon.png
+    - assets/Icons/lixeira.svg
     - assets/images/arroz.png
     - assets/images/biscoito.png
     - assets/images/refri.png
