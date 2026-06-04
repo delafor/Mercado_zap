@@ -4,13 +4,10 @@ import 'package:mercado_zap/models/address.dart';
 import 'package:mercado_zap/providers/payment_provider.dart';
 import 'package:mercado_zap/theme.dart';
 import 'package:provider/provider.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:provider/provider.dart';
 import 'package:mercado_zap/providers/cart_provider.dart';
 import 'database/seed_database.dart';
 import 'pages/main_page.dart';
-import 'providers/cart_provider.dart';
 import 'providers/product_provider.dart';
 import 'providers/pdv_provider.dart';
 

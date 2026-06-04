@@ -44,6 +44,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/Icons/cartIcon2.png
     - assets/logo/logo01.png
     - assets/banner/image1.png
     - assets/banner/image2.jpg
@@ -57,4 +58,3 @@ flutter:
     - assets/images/biscoito.png
     - assets/images/refri.png
     - assets/images/feijao.png
-    - assets/images/

@@ -1,14 +1,13 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:mercado_zap/Payments/checkout_payment_page.dart';
-import 'package:mercado_zap/pages/home_page.dart';
+
 import 'package:mercado_zap/providers/cart_provider.dart';
-import 'package:mercado_zap/widgets/choose_payment.dart';
+
 import 'package:mercado_zap/widgets/counter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:mercado_zap/widgets/cardproduct.dart'; // import 'package:mercado_zap/widgets/cardproduct.dart/'
+// import 'package:mercado_zap/widgets/cardproduct.dart/'
 
 class CartPage extends StatefulWidget {
   @override
@@ -78,7 +77,38 @@ class _CartPageState extends State<CartPage> {
           // .isEmpty verifica se a lista está vazia
           // se vazia, mostra mensagem, senão mostra a lista
           cart.itens.isEmpty
-              ? Center(child: Text('Carrinho vazio'))
+              ? Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+
+                  children: [
+                    Image.asset(
+                      'assets/Icons/cartIcon2.png',
+                      width: 80,
+                      height: 80,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Text('Erro: $error');
+                      },
+                    ),
+                    const SizedBox(width: 8),
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Seu carrinho está vazio',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text('Adicione produtos ao seu carrinho'),
+                      ],
+                    ),
+                  ],
+                ),
+              )
               : ListView.separated(
                 separatorBuilder: (BuildContext context, int index) {
                   return const Divider(
@@ -108,7 +138,7 @@ class _CartPageState extends State<CartPage> {
                               height: 80,
                               filterQuality: FilterQuality.high,
                             ),
-                            VerticalDivider(thickness: 1.5, width: 18),
+                            VerticalDivider(thickness: 1.4, width: 18),
 
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,6 +153,11 @@ class _CartPageState extends State<CartPage> {
                                 ),
                                 Text(
                                   'R\$ ${(item.price * item.quantity).toStringAsFixed(2)}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 16,
+                                    color: colors.secondary,
+                                  ),
                                 ),
                                 Transform.scale(
                                   scale: 0.8,

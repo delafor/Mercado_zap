@@ -1,6 +1,5 @@
 // agora ler
 import 'package:hive/hive.dart';
-import 'package:mercado_zap/models/pedido.dart';
 import 'package:mercado_zap/models/product.dart';
 
 class ReadDatabase {

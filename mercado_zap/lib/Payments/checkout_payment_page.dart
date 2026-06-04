@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mercado_zap/models/cart_item.dart';
 import 'package:mercado_zap/providers/cart_provider.dart';
-import 'package:mercado_zap/providers/product_provider.dart';
 import 'package:mercado_zap/widgets/choose_payment.dart';
 import 'package:mercado_zap/widgets/info_row.dart';
 import 'package:provider/provider.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
-import '../providers/payment_provider.dart';
 import 'pix_payment_page.dart';
 
 class CheckoutPaymentPage extends StatefulWidget {
@@ -27,7 +23,7 @@ class _CheckoutPaymentPage extends State<CheckoutPaymentPage> {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final cartProvider = context.watch<CartProvider>();
-    final paymentProvider = context.watch<PaymentProvider>();
+
     final itens = widget.produtos ?? cartProvider.itens;
     final cart = context.watch<CartProvider>();
     double totalFinal = widget.total + taxaEntrega;

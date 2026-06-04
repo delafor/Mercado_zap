@@ -1,5 +1,4 @@
 
-import 'package:mercado_zap/database/seed_database.dart';
 String gerarImagem(String name) {
   final formatado = name
       .toLowerCase()

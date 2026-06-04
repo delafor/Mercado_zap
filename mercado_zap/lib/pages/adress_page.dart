@@ -1,107 +1,121 @@
-import 'dart:core';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:mercado_zap/models/Address.dart';
-import 'package:mercado_zap/widgets/checkbox.dart';
 import 'package:mercado_zap/widgets/customformfield.dart';
 
-class AddLocalDialog extends StatefulWidget {
-  const AddLocalDialog({Key? key}) : super(key: key);
+class AddressPage extends StatefulWidget {
+  // Se vier um endereço aqui, significa que estamos EDITANDO
+  final Address? address;
+
+  // Índice do endereço na lista (usado para atualizar no Hive)
+  final int? index;
+
+  const AddressPage({super.key, this.address, this.index});
+
   @override
-  _AddLocalDialogState createState() => _AddLocalDialogState();
+  State<AddressPage> createState() => _AddressPageState();
 }
 
-class _AddLocalDialogState extends State<AddLocalDialog> {
-  late final Box _box;
-  final _formKey = GlobalKey<FormState>();
-  final _name = TextEditingController();
-  final _nameRua = TextEditingController();
-  final _numberCasa = TextEditingController();
-  final _numberTel = TextEditingController();
-  final _complemento = TextEditingController();
-  final _bairro = TextEditingController();
-  bool _isSelected = false;
+class _AddressPageState extends State<AddressPage> {
+  // Controllers que controlam o texto digitado nos campos
+  final nameController = TextEditingController();
+
+  final ruaController = TextEditingController();
+
+  final numberCasaController = TextEditingController();
+  final numberTelController = TextEditingController();
+  final bairroController = TextEditingController();
   String? _erroTelefone;
   String? _erroNumberCasa;
+
+  @override
   void initState() {
     super.initState();
-    _box = Hive.box('appBox');
+
+    // Se "address" não for null, significa que estamos EDITANDO um endereço existente
+    if (widget.address != null) {
+      // Preenche os campos com os dados já existentes do endereço
+      nameController.text = widget.address!.name;
+      ruaController.text = widget.address!.nameRua;
+      numberCasaController.text = widget.address!.numberCasa;
+      numberTelController.text = widget.address!.numberTel;
+
+      bairroController.text = widget.address!.bairro;
+    }
   }
 
   @override
   void dispose() {
-    _name.dispose();
-    _nameRua.dispose();
-    _numberCasa.dispose();
-    _numberTel.dispose();
-    _complemento.dispose();
-    _bairro.dispose();
-
+    // Libera memória dos controllers quando a tela for destruída
+    nameController.dispose();
+    numberCasaController.dispose();
+    numberTelController.dispose();
+    ruaController.dispose();
+    bairroController.dispose();
     super.dispose();
   }
 
-  List<Address> _getAdresses() {
-    final data = _box.get('addresses', defaultValue: <Map<String, dynamic>>[]);
-    return List<Address>.from(
-      (data as List).map(
-        (item) => Address.fromMap(Map<String, dynamic>.from(item as Map)),
-      ),
-    );
-  }
+  // Função responsável por salvar ou atualizar o endereço no Hive
+  Future<void> salvarEndereco() async {
+    // Abre a box do Hive onde os dados são armazenados localmente
+    final box = Hive.box('appBox');
 
-  Future<void> saveAddress() async {
+    // Pega a lista atual de endereços salvos no Hive
+    final data = List<Map<String, dynamic>>.from(
+      box.get('addresses', defaultValue: []),
+    );
+
+    // Cria um objeto Address com os dados digitados no formulário
     final endereco = Address(
-      name: _name.text,
-      nameRua: _nameRua.text,
-      numberCasa: _numberCasa.text,
-      complemento: _complemento.text,
-      numberTel: _numberTel.text,
-      bairro: _bairro.text,
+      nameRua: ruaController.text,
+      numberCasa: numberCasaController.text,
+      bairro: bairroController.text,
+      name: nameController.text,
+
+      numberTel: numberTelController.text,
+      complemento: '',
     );
 
-    final adresses = _box.get(
-      'addresses',
-      defaultValue: <Map<String, dynamic>>[],
-    );
+    // Verifica se estamos editando um endereço existente
+    if (widget.address != null && widget.index != null) {
+      // Atualiza o endereço na posição correta da lista
+      data[widget.index!] = endereco.toMap();
+    } else {
+      // Se não tiver address, significa que é um novo cadastro
+      data.add(endereco.toMap());
+    }
 
-    final List<Map<String, dynamic>> updated = List<Map<String, dynamic>>.from(
-      (adresses as List).map((item) => Map<String, dynamic>.from(item as Map)),
-    );
-    updated.add(endereco.toMap());
+    // Salva a lista atualizada no Hive (substitui a antiga)
+    await box.put('addresses', data);
 
-    await _box.put('addresses', updated); // salva lista de Map
-  }
-
-  void _submit() async {
-    if (_formKey.currentState!.validate()) {
-      await saveAddress();
-
-      Navigator.pop(context, true);
+    // Se a tela ainda estiver ativa, volta para a anterior
+    if (mounted) {
+      Navigator.pop(context);
     }
   }
 
+  @override
   Widget build(BuildContext context) {
+    // Define se está em modo edição ou criação
+    final editando = widget.address != null;
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.onPrimary,
-        title: const Text('Adicionar endereço'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
+        // Muda o título dependendo do modo
+        title: Text(editando ? 'Editar endereço' : 'Novo endereço'),
       ),
+
       body: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
 
           child: Column(
             children: [
               const SizedBox(height: 25),
               CustomText(text: 'Rua / Avenida'),
               CustomTextField(
-                controller: _nameRua,
+                controller: ruaController,
 
                 hintText: 'Ex: Rua Leones,342',
                 validator: (value) {
@@ -114,7 +128,7 @@ class _AddLocalDialogState extends State<AddLocalDialog> {
               // const SizedBox(height: 35),
               CustomText(text: 'Bairro'),
               CustomTextField(
-                controller: _bairro,
+                controller: bairroController,
 
                 hintText: 'Ex: Centro',
                 validator: (value) {
@@ -131,7 +145,7 @@ class _AddLocalDialogState extends State<AddLocalDialog> {
                 children: [
                   Expanded(
                     child: CustomTextField(
-                      controller: _numberCasa,
+                      controller: numberCasaController,
                       errorText: _erroNumberCasa,
 
                       hintText: 'Ex: 1234',
@@ -156,44 +170,21 @@ class _AddLocalDialogState extends State<AddLocalDialog> {
                       },
                     ),
                   ),
-
-                  const SizedBox(width: 8),
-                  CustomCheckbox(
-                    label: 'Endereço principal',
-                    value: _isSelected,
-
-                    onChanged: (bool? newValue) {
-                      setState(() {
-                        _isSelected = newValue!;
-                      });
-                    },
-                  ),
                 ],
               ),
 
               // const SizedBox(height: 35),
-
-              // const SizedBox(height: 35),
-              CustomText(text: 'Complemento (opcional)'),
-
-              CustomTextField(
-                maxLines: 10,
-                minLines: 5,
-                controller: _complemento,
-
-                hintText: 'Ex: Casa 2',
-              ),
               CustomText(
                 text: 'Dados de contato',
 
                 value:
                     'Se houver algum problema no envio, você receberá uma\nligação neste número',
               ),
-
+              const SizedBox(height: 30),
               CustomText(text: 'Nome Completo'),
 
               CustomTextField(
-                controller: _name,
+                controller: nameController,
 
                 hintText: 'Ex: João da Silva',
                 validator: (value) {
@@ -205,7 +196,7 @@ class _AddLocalDialogState extends State<AddLocalDialog> {
               ),
               CustomText(text: 'Telefone de contato'),
               CustomTextField(
-                controller: _numberTel,
+                controller: numberTelController,
                 errorText: _erroTelefone,
                 hintText: 'Ex: (11) 99999-9999',
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -226,29 +217,23 @@ class _AddLocalDialogState extends State<AddLocalDialog> {
                   return null;
                 },
               ),
-              // const SizedBox(height: 70),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      shadowColor: Theme.of(context).colorScheme.onSurface,
-                      elevation: 5,
-                      backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
+
+              const SizedBox(height: 30),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shadowColor: Theme.of(context).colorScheme.onSurface,
+                    elevation: 5,
+                    backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
                     ),
-                    child: Text(
-                      'Salvar endereço',
-                      style: TextStyle(
-                        shadows: [],
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                    onPressed: _submit,
+                  ),
+                  onPressed: salvarEndereco,
+                  child: Text(
+                    editando ? 'Atualizar endereço' : 'Salvar endereço',
                   ),
                 ),
               ),
