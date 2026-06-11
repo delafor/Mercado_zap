@@ -6,7 +6,6 @@ import FlutterMacOS
 import Foundation
 
 import app_links
-import clipboard
 import cloud_firestore
 import firebase_core
 import firebase_storage
@@ -15,7 +14,6 @@ import url_launcher_macos
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   AppLinksMacosPlugin.register(with: registry.registrar(forPlugin: "AppLinksMacosPlugin"))
-  ClipboardPlugin.register(with: registry.registrar(forPlugin: "ClipboardPlugin"))
   FLTFirebaseFirestorePlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseFirestorePlugin"))
   FLTFirebaseCorePlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseCorePlugin"))
   FLTFirebaseStoragePlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseStoragePlugin"))

@@ -4,7 +4,6 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   app_links
-  clipboard
   cloud_firestore
   firebase_core
   firebase_storage

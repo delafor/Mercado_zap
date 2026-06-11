@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class PaymentService {
-  final String baseUrl = 'http://192.168.0.108:3000';
+  final String baseUrl = 'https://mercado-zap.onrender.com';
 
   Future<Map<String, dynamic>> createPixPayment(double amount) async {
     final response = await http.post(

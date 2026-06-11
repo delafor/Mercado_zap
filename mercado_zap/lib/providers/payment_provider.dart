@@ -17,7 +17,10 @@ class PaymentProvider extends ChangeNotifier {
 
   Timer? timer;
 
-  Future<void> createPayment({required double amount}) async {
+  Future<void> createPayment({
+    required double amount,
+    required dynamic provider,
+  }) async {
     try {
       approved = false;
       qrCode = '';
@@ -34,8 +37,10 @@ class PaymentProvider extends ChangeNotifier {
 
       final data = response['data'];
 
-      qrCode = data['qrCodeImage'];
+      //qrCode = data['qrCodeImage'];
       pixCode = data['brCode'];
+      print('PIX CODE: $pixCode');
+      print('TAMANHO: ${pixCode.length}');
       paymentId = data['id'];
 
       loading = false;

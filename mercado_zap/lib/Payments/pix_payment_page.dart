@@ -22,7 +22,7 @@ class _PixPaymentPageState extends State<PixPaymentPage> {
     Future.microtask(() async {
       final provider = context.read<PaymentProvider>();
 
-      await provider.createPayment(amount: widget.amount);
+      await provider.createPayment(amount: widget.amount, provider: null);
 
       provider.startChecking();
     });

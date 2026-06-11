@@ -28,7 +28,6 @@ dependencies:
   flutter_animate: ^4.5.2
   lottie: ^3.3.3
   pretty_qr_code: ^3.6.0
-  clipboard: ^3.0.14
   flutter_svg: ^2.3.0
   # abacatepay: ^1.0.2+7
 
@@ -46,15 +45,16 @@ flutter:
   assets:
     - assets/Icons/cartIcon2.png
     - assets/logo/logo01.png
-    - assets/banner/image1.png
+  
     - assets/banner/image2.jpg
-    - assets/banner/image3.png
+
     - assets/banner/image4.png
     - assets/banner/image5.png
-    - assets/banner/baixados.jpg
+  
     - assets/Icons/cartIcon.png
     - assets/Icons/lixeira.svg
     - assets/images/arroz.png
     - assets/images/biscoito.png
     - assets/images/refri.png
     - assets/images/feijao.png
+    - assets/images/image4.png

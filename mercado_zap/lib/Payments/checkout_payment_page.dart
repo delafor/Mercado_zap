@@ -46,6 +46,7 @@ class _CheckoutPaymentPage extends State<CheckoutPaymentPage> {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
+      
             children: [
               // CONTAINER DOS PRODUTOS
               Container(
