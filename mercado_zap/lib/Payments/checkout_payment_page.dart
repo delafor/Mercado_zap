@@ -46,7 +46,6 @@ class _CheckoutPaymentPage extends State<CheckoutPaymentPage> {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
-      
             children: [
               // CONTAINER DOS PRODUTOS
               Container(
@@ -229,7 +228,6 @@ class _CheckoutPaymentPage extends State<CheckoutPaymentPage> {
                             ),
                           );
                         }
-                        cart.limpar();
                       },
 
                       style: ElevatedButton.styleFrom(

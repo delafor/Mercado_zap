@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
 import 'package:mercado_zap/Payments/checkout_payment_page.dart';
+import 'package:mercado_zap/pages/add_dialog_local.dart';
+import 'package:mercado_zap/pages/adress_page.dart';
 
 import 'package:mercado_zap/providers/cart_provider.dart';
 
@@ -35,9 +38,12 @@ class _CartPageState extends State<CartPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
+
     // context.watch fica "escutando" o CartProvider
     // toda vez que notifyListeners() for chamado, a tela reconstrói automaticamente
     final cart = context.watch<CartProvider>();
+
+    
 
     return Scaffold(
       appBar: AppBar(
@@ -202,14 +208,71 @@ class _CartPageState extends State<CartPage> {
                   height: 50,
 
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (_) => CheckoutPaymentPage(total: cart.total),
-                        ),
-                      );
+                    onPressed: () async {
+                      try {
+                        final box = Hive.box('appBox');
+                        final addresses = box.get(
+                          'addresses',
+                          defaultValue: [],
+                        );
+                        if (addresses.isEmpty) {
+                          await showDialog(
+                            context: context,
+                            builder:
+                                (context) => AlertDialog(
+                                  title: const Text(
+                                    '[ Erro ] ao finalizar pedido',
+                                  ),
+                                  content: const Text(
+                                    'Nenhuma endereço cadastrado!',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      child: const Text(
+                                        'Cancelar',
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+
+                                      onPressed: () {
+                                        Navigator.pop(
+                                          context,
+                                        ); // fecha o dialog
+                                      },
+                                    ),
+                                    TextButton(
+                                      child: const Text(
+                                        'Adicionar',
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(
+                                          context,
+                                        ); // fecha o dialog
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => const AddressPage(),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                          );
+                          return;
+                        }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (_) => CheckoutPaymentPage(total: cart.total),
+                          ),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(e.toString())));
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: colors.secondary,
@@ -233,27 +296,6 @@ class _CartPageState extends State<CartPage> {
                       ),
                     ),
                   ),
-                  // child: ElevatedButton(
-                  //   onPressed: () {
-                  //     Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder:
-                  //             (_) => CheckoutPaymentPage(total: cart.total),
-                  //       ),
-                  //     );
-                  //   },
-
-                  //   style: ElevatedButton.styleFrom(
-                  //     backgroundColor: Colors.green,
-                  //     foregroundColor: Colors.white,
-                  //   ),
-
-                  //   child: const Text(
-                  //     'Finalizar Compra',
-                  //     style: TextStyle(fontSize: 16),
-                  //   ),
-                  // ),
                 ),
               )
               : null,

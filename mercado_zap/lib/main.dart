@@ -17,18 +17,18 @@ void main() async {
   await Hive.initFlutter();
 
   await Hive.openBox('appBox');
+  await Hive.openBox('pedidos');
 
   await Hive.openBox<Address>('addresses');
   // await Hive.box('appBox').clear(); // ← limpa TUDO do appBox
   await SeedDatabase.seed();
   final cartProvider = CartProvider();
-
   await cartProvider.carregarCarrinho();
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => PaymentProvider()),
-        ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider<CartProvider>.value(value: cartProvider),
         ChangeNotifierProvider(create: (_) => ProductProvider()),
         ChangeNotifierProxyProvider<CartProvider, PdvProvider>(
           create: (context) => PdvProvider(cart: context.read<CartProvider>()),

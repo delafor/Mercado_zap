@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:provider/provider.dart';
-
+import 'package:hive/hive.dart';
+import '../providers/cart_provider.dart';
 import '../providers/payment_provider.dart';
 import 'success_payment_page.dart';
 
@@ -15,6 +16,7 @@ class PixPaymentPage extends StatefulWidget {
 }
 
 class _PixPaymentPageState extends State<PixPaymentPage> {
+  bool pedidoSalvo = false;
   @override
   void initState() {
     super.initState();
@@ -31,15 +33,71 @@ class _PixPaymentPageState extends State<PixPaymentPage> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<PaymentProvider>();
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
 
-    if (provider.approved) {
-      Future.microtask(() {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const SuccessPaymentPage()),
-        );
+    if (provider.approved && !pedidoSalvo) {
+      pedidoSalvo = true;
+
+      Future.microtask(() async {
+        try {
+          final box = Hive.box('appBox');
+          final pedidosBox = Hive.box('pedidos');
+          final cart = context.read<CartProvider>();
+
+          final addresses = box.get('addresses', defaultValue: []);
+
+          if (addresses is List && addresses.isNotEmpty) {
+            final ultimoEndereco = Map<String, dynamic>.from(addresses.last);
+
+            final pedido = {
+              'id': DateTime.now().millisecondsSinceEpoch,
+              'numeroPedido': DateTime.now().millisecondsSinceEpoch,
+              'nome': ultimoEndereco['name'] ?? '',
+              'telefone': ultimoEndereco['numberTel'] ?? '',
+              'endereco':
+                  '${ultimoEndereco['nameRua'] ?? ''}, '
+                  '${ultimoEndereco['numberCasa'] ?? ''} - '
+                  '${ultimoEndereco['bairro'] ?? ''}',
+              'complemento': ultimoEndereco['complemento'] ?? '',
+              'total': widget.amount,
+              'status': 'Pago',
+              'data': DateTime.now().toString(),
+              'itens':
+                  cart.itens.map((item) {
+                    return {
+                      'name': item.name,
+                      'price': item.price,
+                      // 'total': item.price + item.quantity,
+                      'quantity': item.quantity,
+                    };
+                  }).toList(),
+            };
+
+            await pedidosBox.add(pedido);
+          }
+          cart.limpar();
+
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const SuccessPaymentPage()),
+            );
+          }
+        } catch (e, stackTrace) {
+          debugPrint(
+            'Erro ao salvar pedido: $e\n$stackTrace',
+          ); // se o hive dar erro vou saber o resultado
+          // Mesmo com erro, navega para teste
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Erro ao salvar pedido')),
+            );
+          }
+        }
       });
     }
+
     if (provider.loading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -91,6 +149,17 @@ class _PixPaymentPageState extends State<PixPaymentPage> {
                     const SnackBar(content: Text('Código copiado')),
                   );
                 },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colors.secondary,
+                  minimumSize: const Size(double.infinity, 60),
+                  foregroundColor: colors.onSecondary,
+
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    side: BorderSide(color: colors.secondary),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                ),
                 child: const Text('Copiar código PIX'),
               ),
             ),
