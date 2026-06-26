@@ -7,6 +7,7 @@ class PaymentService {
 
   Future<Map<String, dynamic>> createPixPayment(double amount) async {
     final response = await http.post(
+      // aqui da um erro de HandshakeException (HandshakeException: Connection terminated during handshake)
       Uri.parse('$baseUrl/payments/pix'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'amount': amount}),

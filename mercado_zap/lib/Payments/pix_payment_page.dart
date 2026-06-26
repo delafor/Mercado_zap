@@ -160,7 +160,13 @@ class _PixPaymentPageState extends State<PixPaymentPage> {
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 8),
                 ),
-                child: const Text('Copiar código PIX'),
+                child: const Text(
+                  'Copiar código PIX',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
 
