@@ -3,7 +3,9 @@ import express, { type Express } from 'express';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import { pinoHttp } from 'pino-http';
+import swaggerUi from 'swagger-ui-express';
 
+import { openapiSpec } from './docs/openapi.js';
 import { logger } from './lib/logger.js';
 import { errorHandler } from './middlewares/error-handler.js';
 import { paymentRoutes } from './modules/payments/payment.routes.js';
@@ -11,6 +13,12 @@ import { webhookRoutes } from './modules/webhooks/webhook.routes.js';
 
 export function createApp(): Express {
   const app = express();
+
+  // API docs, mounted before helmet so Swagger UI's assets are not blocked by CSP.
+  app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiSpec));
+  app.get('/openapi.json', (_req, res) => {
+    res.json(openapiSpec);
+  });
 
   app.use(helmet());
   app.use(cors());

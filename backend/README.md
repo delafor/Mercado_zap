@@ -73,9 +73,12 @@ docker compose --profile full up -d --build
 
 ## API
 
+Documentação interativa (Swagger UI) em **`/docs`**; spec crua em `/openapi.json`.
+
 | Método | Rota | Descrição |
 |--------|------|-----------|
 | `GET` | `/health` | Healthcheck |
+| `GET` | `/docs` | Swagger UI |
 | `POST` | `/payments/pix` | Cria uma cobrança PIX. Body: `{ "amount": number }` (em reais) |
 | `GET` | `/payments/:id` | Consulta um pagamento e seu status |
 | `POST` | `/webhooks/abacatepay?webhookSecret=...` | Recebe a notificação da AbacatePay |
