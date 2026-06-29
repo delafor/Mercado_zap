@@ -47,14 +47,14 @@ db/             ── conexão (pool) e schema
 
 Suporte transversal:
 
-| Pasta | Papel |
-|-------|-------|
-| `config/env.ts` | Valida as variáveis de ambiente com Zod no boot (falha rápido) |
-| `lib/logger.ts` | Logger estruturado (Pino) |
-| `lib/errors.ts` | `AppError` e o wrapper `asyncHandler` |
-| `middlewares/error-handler.ts` | Converte exceções em respostas HTTP |
-| `queues/` | Conexão Redis, fila e worker do BullMQ |
-| `docs/openapi.ts` | Especificação OpenAPI servida em `/docs` |
+| Pasta                          | Papel                                                          |
+| ------------------------------ | -------------------------------------------------------------- |
+| `config/env.ts`                | Valida as variáveis de ambiente com Zod no boot (falha rápido) |
+| `lib/logger.ts`                | Logger estruturado (Pino)                                      |
+| `lib/errors.ts`                | `AppError` e o wrapper `asyncHandler`                          |
+| `middlewares/error-handler.ts` | Converte exceções em respostas HTTP                            |
+| `queues/`                      | Conexão Redis, fila e worker do BullMQ                         |
+| `docs/openapi.ts`              | Especificação OpenAPI servida em `/docs`                       |
 
 **Por que separar assim:** cada camada tem um motivo único para mudar. O
 controller não sabe SQL, o service não sabe de HTTP, o repository não sabe de
@@ -87,27 +87,30 @@ A ordem importa: o `errorHandler` precisa ser o último `app.use`, e o
 ## 4. Fluxo: criar um pagamento PIX
 
 ```
-App ──POST /payments/pix {amount}──► controller
-                                        │ valida amount > 0 (Zod)
+App ──POST /payments/pix {items}──► controller
+                                        │ valida productId + quantity (Zod)
                                         ▼
-                                     service.createPixPayment
-                                        │ amount → centavos
+                                     service.createCheckout
+                                        │ busca preços no catálogo do servidor
+                                        │ calcula total em centavos
+                                        │ grava order + order_items
                                         ├──► AbacatePay: cria o QR Code PIX
                                         │       (retorna id do provedor + brCode)
                                         ▼
-                                     repository.insertPayment (status PENDING)
+                                     repository.insertPayment ligado ao pedido
                                         │
                                         ▼
-App ◄────── 201 { id, brCode, status: PENDING, ... } ──────────
+App ◄────── 201 { id, amountCents, brCode, status: PENDING, ... } ──────────
 ```
 
 Pontos-chave:
 
-- **Valores em centavos**: a AbacatePay e o banco guardam o valor em centavos
-  (`Math.round(amount * 100)`); o app envia em reais.
+- **Preço é decisão do servidor**: o app envia somente `productId` e
+  `quantity`. O backend busca o catálogo, calcula tudo em centavos inteiros e
+  rejeita campos extras como `price`.
 - **`id` interno vs `providerId`**: cada pagamento tem um `id` UUID nosso (usado
-  na URL `/payments/:id`) e um `providerId` (o id da AbacatePay), usado para
-  cruzar o webhook depois.
+  na URL `/payments/:id`) e um `providerId` (o id da AbacatePay), usado apenas
+  internamente para cruzar o webhook depois.
 - O pagamento nasce **`PENDING`**. Quem confirma é o fluxo de webhook.
 
 ---
@@ -147,7 +150,7 @@ Por que esse desenho:
   BullMQ **reprocessa com backoff exponencial** — 5 tentativas, começando em 2s.
   Configurado em `queues/payment-webhook.queue.ts`.
 - **Idempotência**: `reconcilePaymentStatus` só faz um `UPDATE ... WHERE
-  provider_id = ?`. Reprocessar o mesmo job leva ao mesmo estado final, sem
+provider_id = ?`. Reprocessar o mesmo job leva ao mesmo estado final, sem
   efeito colateral.
 
 > O worker hoje roda **no mesmo processo** do servidor (`server.ts` chama
@@ -158,17 +161,24 @@ Por que esse desenho:
 
 ## 6. Modelo de dados
 
-Tabela `payments` (ver `db/schema.ts`):
+Tabelas principais (ver `db/schema.ts`):
 
-| Coluna | Tipo | Observação |
-|--------|------|------------|
-| `id` | uuid (PK) | id interno, gerado pelo banco |
-| `provider_id` | text (único) | id da cobrança na AbacatePay |
-| `amount` | integer | valor em **centavos** |
-| `status` | enum | `PENDING` · `PAID` · `EXPIRED` · `CANCELLED` · `FAILED` |
-| `br_code` | text | código PIX copia-e-cola |
-| `description` | text | descrição da cobrança |
-| `created_at` / `updated_at` | timestamptz | preenchidos automaticamente |
+- `products`: catálogo do servidor, com `price_cents` em centavos.
+- `orders`: snapshot do checkout e `total_cents`.
+- `order_items`: itens comprados, quantidade, preço unitário e total da linha em
+  centavos no momento da compra.
+
+Tabela `payments`:
+
+| Coluna                      | Tipo         | Observação                                              |
+| --------------------------- | ------------ | ------------------------------------------------------- |
+| `id`                        | uuid (PK)    | id interno, gerado pelo banco                           |
+| `order_id`                  | uuid (único) | pedido associado                                        |
+| `provider_id`               | text (único) | id da cobrança na AbacatePay                            |
+| `amount_cents`              | bigint       | valor em **centavos**                                   |
+| `status`                    | enum         | `PENDING` · `PAID` · `EXPIRED` · `CANCELLED` · `FAILED` |
+| `br_code`                   | text         | código PIX copia-e-cola                                 |
+| `created_at` / `updated_at` | timestamptz  | preenchidos automaticamente                             |
 
 O status começa em `PENDING` e transita conforme o que a AbacatePay reporta. O
 mapeamento provedor → nosso enum fica em `payment.service.ts`
@@ -198,11 +208,11 @@ O `.env` nunca é commitado. Em produção, as variáveis vêm do ambiente
 
 Toda exceção cai no `error-handler.ts`, que traduz por tipo:
 
-| Origem | Resposta |
-|--------|----------|
-| `ZodError` (validação) | `400` com os campos inválidos |
-| `AppError` (erro esperado) | o `statusCode` dele (`404`, `401`, `502`...) |
-| Qualquer outra | `500` genérico (o erro real é logado, não vaza ao cliente) |
+| Origem                     | Resposta                                                   |
+| -------------------------- | ---------------------------------------------------------- |
+| `ZodError` (validação)     | `400` com os campos inválidos                              |
+| `AppError` (erro esperado) | o `statusCode` dele (`404`, `401`, `502`...)               |
+| Qualquer outra             | `500` genérico (o erro real é logado, não vaza ao cliente) |
 
 Falhas na chamada à AbacatePay são convertidas em `AppError(502)` dentro de
 `lib/abacatepay.ts` (com log do motivo real). Assim, "provedor fora do ar" vira

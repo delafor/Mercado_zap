@@ -13,14 +13,16 @@ class PaymentService {
 
   static const Duration _timeout = Duration(seconds: 15);
 
-  /// Creates a PIX charge. Returns the persisted payment
-  /// (`id`, `brCode`, `status`, ...).
-  Future<Map<String, dynamic>> createPixPayment(double amount) async {
+  /// Creates a PIX charge. The backend owns prices; the app only sends the
+  /// product ids and quantities selected by the user.
+  Future<Map<String, dynamic>> createPixPayment(
+    List<Map<String, int>> items,
+  ) async {
     final response = await http
         .post(
           Uri.parse('$baseUrl/payments/pix'),
           headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({'amount': amount}),
+          body: jsonEncode({'items': items}),
         )
         .timeout(_timeout);
 

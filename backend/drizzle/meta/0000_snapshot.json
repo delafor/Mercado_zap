@@ -1,11 +1,11 @@
 {
-  "id": "d8be8083-2a5c-4610-aedf-ca748c96b1c9",
+  "id": "309d7e33-7e82-4d24-a6f6-4a3369398f75",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.payments": {
-      "name": "payments",
+    "public.order_items": {
+      "name": "order_items",
       "schema": "",
       "columns": {
         "id": {
@@ -15,35 +15,78 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "provider_id": {
-          "name": "provider_id",
-          "type": "text",
+        "order_id": {
+          "name": "order_id",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "amount": {
-          "name": "amount",
+        "product_id": {
+          "name": "product_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "status": {
-          "name": "status",
-          "type": "payment_status",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'PENDING'"
-        },
-        "br_code": {
-          "name": "br_code",
-          "type": "text",
+        "quantity": {
+          "name": "quantity",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "description": {
-          "name": "description",
-          "type": "text",
+        "unit_price_cents": {
+          "name": "unit_price_cents",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "line_total_cents": {
+          "name": "line_total_cents",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "order_items_order_id_orders_id_fk": {
+          "name": "order_items_order_id_orders_id_fk",
+          "tableFrom": "order_items",
+          "tableTo": "orders",
+          "columnsFrom": ["order_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "order_items_product_id_products_id_fk": {
+          "name": "order_items_product_id_products_id_fk",
+          "tableFrom": "order_items",
+          "tableTo": "products",
+          "columnsFrom": ["product_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.orders": {
+      "name": "orders",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "total_cents": {
+          "name": "total_cents",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": true
         },
@@ -65,15 +108,138 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.payments": {
+      "name": "payments",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "order_id": {
+          "name": "order_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "provider_id": {
+          "name": "provider_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amount_cents": {
+          "name": "amount_cents",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "payment_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'PENDING'"
+        },
+        "br_code": {
+          "name": "br_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "payments_order_id_orders_id_fk": {
+          "name": "payments_order_id_orders_id_fk",
+          "tableFrom": "payments",
+          "tableTo": "orders",
+          "columnsFrom": ["order_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {
+        "payments_order_id_unique": {
+          "name": "payments_order_id_unique",
+          "nullsNotDistinct": false,
+          "columns": ["order_id"]
+        },
         "payments_provider_id_unique": {
           "name": "payments_provider_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "provider_id"
-          ]
+          "columns": ["provider_id"]
         }
       },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.products": {
+      "name": "products",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price_cents": {
+          "name": "price_cents",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "active": {
+          "name": "active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -83,13 +249,7 @@
     "public.payment_status": {
       "name": "payment_status",
       "schema": "public",
-      "values": [
-        "PENDING",
-        "PAID",
-        "EXPIRED",
-        "CANCELLED",
-        "FAILED"
-      ]
+      "values": ["PENDING", "PAID", "EXPIRED", "CANCELLED", "FAILED"]
     }
   },
   "schemas": {},

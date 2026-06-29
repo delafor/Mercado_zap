@@ -18,7 +18,7 @@ class PaymentProvider extends ChangeNotifier {
   Timer? _timer;
 
   Future<void> createPayment({
-    required double amount,
+    required List<Map<String, int>> items,
     required dynamic provider,
   }) async {
     try {
@@ -29,7 +29,7 @@ class PaymentProvider extends ChangeNotifier {
       loading = true;
       notifyListeners();
 
-      final payment = await service.createPixPayment(amount);
+      final payment = await service.createPixPayment(items);
 
       pixCode = payment['brCode'] as String;
       paymentId = payment['id'] as String;

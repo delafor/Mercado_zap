@@ -29,7 +29,9 @@ export const openapiSpec = {
     },
     '/payments/pix': {
       post: {
-        summary: 'Create a PIX charge',
+        summary: 'Create a PIX charge from cart items',
+        description:
+          'The client sends product ids and quantities only. Prices are loaded from the server catalog and calculated in integer cents.',
         requestBody: {
           required: true,
           content: {
@@ -46,7 +48,7 @@ export const openapiSpec = {
             },
           },
           '400': {
-            description: 'Invalid amount',
+            description: 'Invalid checkout items',
             content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } },
           },
           '502': {
@@ -105,23 +107,35 @@ export const openapiSpec = {
     schemas: {
       CreatePixRequest: {
         type: 'object',
-        required: ['amount'],
+        required: ['items'],
+        additionalProperties: false,
         properties: {
-          amount: { type: 'number', example: 25.9, description: 'Amount in currency units (BRL)' },
+          items: {
+            type: 'array',
+            minItems: 1,
+            maxItems: 50,
+            items: {
+              type: 'object',
+              required: ['productId', 'quantity'],
+              additionalProperties: false,
+              properties: {
+                productId: { type: 'integer', example: 1 },
+                quantity: { type: 'integer', minimum: 1, maximum: 99, example: 2 },
+              },
+            },
+          },
         },
       },
       Payment: {
         type: 'object',
         properties: {
           id: { type: 'string', format: 'uuid' },
-          providerId: { type: 'string' },
-          amount: { type: 'integer', description: 'Amount in cents' },
+          amountCents: { type: 'integer', description: 'Amount in cents' },
           status: {
             type: 'string',
             enum: ['PENDING', 'PAID', 'EXPIRED', 'CANCELLED', 'FAILED'],
           },
           brCode: { type: 'string' },
-          description: { type: 'string' },
           createdAt: { type: 'string', format: 'date-time' },
           updatedAt: { type: 'string', format: 'date-time' },
         },

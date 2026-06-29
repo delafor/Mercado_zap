@@ -1,3 +1,5 @@
+import { timingSafeEqual } from 'node:crypto';
+
 import type { Request, Response } from 'express';
 import { z } from 'zod';
 
@@ -16,9 +18,17 @@ const webhookSchema = z.object({
   }),
 });
 
+// Constant-time comparison to avoid leaking the secret via timing.
+function secretMatches(received: unknown): boolean {
+  if (typeof received !== 'string') return false;
+  const a = Buffer.from(received);
+  const b = Buffer.from(env.ABACATEPAY_WEBHOOK_SECRET);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
 export const handleAbacatePayWebhook = asyncHandler(async (req: Request, res: Response) => {
   // AbacatePay sends the configured secret as ?webhookSecret=...
-  if (req.query.webhookSecret !== env.ABACATEPAY_WEBHOOK_SECRET) {
+  if (!secretMatches(req.query.webhookSecret)) {
     throw new UnauthorizedError('Invalid webhook secret');
   }
 
@@ -26,7 +36,7 @@ export const handleAbacatePayWebhook = asyncHandler(async (req: Request, res: Re
   const providerId = data.pixQrCode?.id ?? data.payment?.id ?? data.id;
 
   if (!providerId) {
-    logger.warn({ body: req.body }, 'Webhook received without a payment id');
+    logger.warn('Webhook received without a payment id');
     res.status(202).json({ received: true });
     return;
   }

@@ -2,7 +2,7 @@ import request from 'supertest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../src/modules/payments/payment.service.js', () => ({
-  createPixPayment: vi.fn(),
+  createCheckout: vi.fn(),
   getPayment: vi.fn(),
   reconcilePaymentStatus: vi.fn(),
 }));
@@ -31,24 +31,49 @@ describe('POST /payments/pix', () => {
     vi.clearAllMocks();
   });
 
-  it('returns 400 for an invalid amount and does not hit the service', async () => {
-    const res = await request(app).post('/payments/pix').send({ amount: -5 });
+  it('returns 400 for an empty cart and does not hit the service', async () => {
+    const res = await request(app).post('/payments/pix').send({ items: [] });
     expect(res.status).toBe(400);
-    expect(res.body.error).toBe(true);
-    expect(service.createPixPayment).not.toHaveBeenCalled();
+    expect(service.createCheckout).not.toHaveBeenCalled();
   });
 
-  it('returns 201 with the created payment', async () => {
-    vi.mocked(service.createPixPayment).mockResolvedValue({
-      id: 'uuid',
-      amount: 2590,
-      status: 'PENDING',
-    } as never);
+  it('returns 400 when the client sends a price instead of items', async () => {
+    const res = await request(app).post('/payments/pix').send({ amount: 0.01 });
+    expect(res.status).toBe(400);
+    expect(service.createCheckout).not.toHaveBeenCalled();
+  });
 
-    const res = await request(app).post('/payments/pix').send({ amount: 25.9 });
+  it('returns 400 when the client sends item prices', async () => {
+    const res = await request(app)
+      .post('/payments/pix')
+      .send({ items: [{ productId: 1, quantity: 1, price: 0.01 }] });
+    expect(res.status).toBe(400);
+    expect(service.createCheckout).not.toHaveBeenCalled();
+  });
+
+  it('returns 201 and forwards only the items to the service', async () => {
+    vi.mocked(service.createCheckout).mockResolvedValue({
+      id: 'pay-1',
+      amountCents: 2590,
+      status: 'PENDING',
+      brCode: 'br',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    const res = await request(app)
+      .post('/payments/pix')
+      .send({ items: [{ productId: 1, quantity: 1 }] });
 
     expect(res.status).toBe(201);
-    expect(res.body.id).toBe('uuid');
-    expect(service.createPixPayment).toHaveBeenCalledWith(25.9);
+    expect(res.body.amountCents).toBe(2590);
+    expect(service.createCheckout).toHaveBeenCalledWith([{ productId: 1, quantity: 1 }]);
+  });
+});
+
+describe('GET /payments/:id', () => {
+  it('returns 400 for a non-UUID id', async () => {
+    const res = await request(app).get('/payments/not-a-uuid');
+    expect(res.status).toBe(400);
   });
 });

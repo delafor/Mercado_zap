@@ -2,9 +2,11 @@ import cors from 'cors';
 import express, { type Express } from 'express';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
+import { stdSerializers } from 'pino';
 import { pinoHttp } from 'pino-http';
 import swaggerUi from 'swagger-ui-express';
 
+import { env } from './config/env.js';
 import { openapiSpec } from './docs/openapi.js';
 import { logger } from './lib/logger.js';
 import { errorHandler } from './middlewares/error-handler.js';
@@ -21,8 +23,34 @@ export function createApp(): Express {
   });
 
   app.use(helmet());
-  app.use(cors());
-  app.use(pinoHttp({ logger }));
+  app.use(
+    cors({
+      origin: env.CORS_ORIGIN === '*' ? true : env.CORS_ORIGIN.split(',').map((o) => o.trim()),
+    }),
+  );
+  app.use(
+    pinoHttp({
+      logger,
+      serializers: {
+        // Redact the webhook secret wherever it shows up in the logged request
+        // (both the raw URL and the parsed query object).
+        req(req) {
+          const s = stdSerializers.req(req) as unknown as {
+            url?: string;
+            query?: Record<string, unknown>;
+            [key: string]: unknown;
+          };
+          if (typeof s.url === 'string') {
+            s.url = s.url.replace(/([?&]webhookSecret=)[^&]+/i, '$1[REDACTED]');
+          }
+          if (s.query && 'webhookSecret' in s.query) {
+            s.query = { ...s.query, webhookSecret: '[REDACTED]' };
+          }
+          return s;
+        },
+      },
+    }),
+  );
   app.use(express.json());
 
   app.get('/health', (_req, res) => {

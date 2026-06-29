@@ -12,6 +12,12 @@ export class AppError extends Error {
   }
 }
 
+export class BadRequestError extends AppError {
+  constructor(message = 'Bad request', details?: unknown) {
+    super(400, message, details);
+  }
+}
+
 export class NotFoundError extends AppError {
   constructor(message = 'Resource not found') {
     super(404, message);

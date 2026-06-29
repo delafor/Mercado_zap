@@ -33,14 +33,14 @@ reprocessadas pelo BullMQ com retry/backoff.
 
 Estrutura em camadas (`src/`):
 
-| Pasta | Responsabilidade |
-|-------|------------------|
-| `config/` | Validação do ambiente (Zod), falha rápido se faltar variável |
-| `db/` | Conexão, schema e migrations (Drizzle) |
-| `lib/` | Cliente AbacatePay, logger, erros |
-| `queues/` | Conexão Redis, fila e worker do BullMQ |
-| `modules/<área>/` | `routes` → `controller` → `service` → `repository` |
-| `middlewares/` | Tratamento de erro centralizado |
+| Pasta             | Responsabilidade                                             |
+| ----------------- | ------------------------------------------------------------ |
+| `config/`         | Validação do ambiente (Zod), falha rápido se faltar variável |
+| `db/`             | Conexão, schema e migrations (Drizzle)                       |
+| `lib/`            | Cliente AbacatePay, logger, erros                            |
+| `queues/`         | Conexão Redis, fila e worker do BullMQ                       |
+| `modules/<área>/` | `routes` → `controller` → `service` → `repository`           |
+| `middlewares/`    | Tratamento de erro centralizado                              |
 
 ## Rodando localmente
 
@@ -64,28 +64,29 @@ docker compose --profile full up -d --build
 
 ## Scripts
 
-| Script | O que faz |
-|--------|-----------|
-| `npm run dev` | Backend em modo desenvolvimento (hot reload, logs bonitos) |
-| `npm run build` | Compila TypeScript para `dist/` |
-| `npm start` | Roda o build de produção (`dist/server.js`) |
-| `npm run typecheck` | Checagem de tipos sem emitir |
-| `npm test` | Testes (Vitest) |
-| `npm run lint` / `npm run format` | ESLint / Prettier |
-| `npm run db:generate` | Gera uma nova migration a partir do schema |
-| `npm run db:migrate` | Aplica as migrations no banco |
+| Script                            | O que faz                                                  |
+| --------------------------------- | ---------------------------------------------------------- |
+| `npm run dev`                     | Backend em modo desenvolvimento (hot reload, logs bonitos) |
+| `npm run build`                   | Compila TypeScript para `dist/`                            |
+| `npm start`                       | Roda o build de produção (`dist/server.js`)                |
+| `npm run typecheck`               | Checagem de tipos sem emitir                               |
+| `npm test`                        | Testes (Vitest)                                            |
+| `npm run lint` / `npm run format` | ESLint / Prettier                                          |
+| `npm run db:generate`             | Gera uma nova migration a partir do schema                 |
+| `npm run db:migrate`              | Aplica as migrations no banco                              |
+| `npm run db:seed`                 | Semeia o catálogo de produtos do servidor                  |
 
 ## API
 
 Documentação interativa (Swagger UI) em **`/docs`**; spec crua em `/openapi.json`.
 
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| `GET` | `/health` | Healthcheck |
-| `GET` | `/docs` | Swagger UI |
-| `POST` | `/payments/pix` | Cria uma cobrança PIX. Body: `{ "amount": number }` (em reais) |
-| `GET` | `/payments/:id` | Consulta um pagamento e seu status |
-| `POST` | `/webhooks/abacatepay?webhookSecret=...` | Recebe a notificação da AbacatePay |
+| Método | Rota                                     | Descrição                                                                                                   |
+| ------ | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `GET`  | `/health`                                | Healthcheck                                                                                                 |
+| `GET`  | `/docs`                                  | Swagger UI                                                                                                  |
+| `POST` | `/payments/pix`                          | Cria uma cobrança PIX. Body: `{ "items": [{ "productId": 1, "quantity": 2 }] }`; o servidor calcula o preço |
+| `GET`  | `/payments/:id`                          | Consulta um pagamento e seu status                                                                          |
+| `POST` | `/webhooks/abacatepay?webhookSecret=...` | Recebe a notificação da AbacatePay                                                                          |
 
 ## Variáveis de ambiente
 

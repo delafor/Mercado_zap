@@ -9,6 +9,8 @@ const envSchema = z.object({
   REDIS_URL: z.string().url().default('redis://localhost:6379'),
   ABACATEPAY_KEY: z.string().min(1),
   ABACATEPAY_WEBHOOK_SECRET: z.string().min(1),
+  // Comma-separated allowed origins, or '*' for any. Lock this down in production.
+  CORS_ORIGIN: z.string().default('*'),
 });
 
 const parsed = envSchema.safeParse(process.env);
