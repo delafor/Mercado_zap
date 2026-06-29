@@ -1,0 +1,45 @@
+# ===== Secrets / environment =====
+.env
+.env.*
+!.env.example
+
+# ===== Node / Backend =====
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ===== Editors / IDEs =====
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+*.swp
+.DS_Store
+
+# ===== Flutter / Dart =====
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+coverage/
+**/ios/Flutter/.last_build_id
+app.*.symbols
+app.*.map.json
+
+# Flutter Version Management (FVM): track only the config, never the SDK
+.fvm/versions/
+.fvm/flutter_sdk
+
+# ===== Misc =====
+*.log
+*.class
+*.pyc
+.history
+.svn/
+migrate_working_dir/
