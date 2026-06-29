@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import '../services/payment_service.dart';
 
@@ -9,13 +9,13 @@ class PaymentProvider extends ChangeNotifier {
 
   bool loading = false;
 
-  String qrCode = '';
   String pixCode = '';
   String paymentId = '';
 
   bool approved = false;
+  String? error;
 
-  Timer? timer;
+  Timer? _timer;
 
   Future<void> createPayment({
     required double amount,
@@ -23,74 +23,61 @@ class PaymentProvider extends ChangeNotifier {
   }) async {
     try {
       approved = false;
-      qrCode = '';
+      error = null;
       pixCode = '';
       paymentId = '';
       loading = true;
-
       notifyListeners();
 
-      final response = await service.createPixPayment(amount);
+      final payment = await service.createPixPayment(amount);
 
-      print('RESPOSTA API:');
-      print(response);
-
-      final data = response['data'];
-
-      //qrCode = data['qrCodeImage'];
-      pixCode = data['brCode'];
-      print('PIX CODE: $pixCode');
-      print('TAMANHO: ${pixCode.length}');
-      paymentId = data['id'];
+      pixCode = payment['brCode'] as String;
+      paymentId = payment['id'] as String;
 
       loading = false;
-
       notifyListeners();
     } catch (e) {
       loading = false;
-
+      error = 'Não foi possível gerar o PIX. Tente novamente.';
       notifyListeners();
-
-      print('ERRO AO GERAR PIX');
-      print(e);
+      debugPrint('Error creating PIX payment: $e');
     }
   }
 
-  // gerar qr code
-  // void startChecking() {
-  //   timer = Timer.periodic(const Duration(seconds: 5), (_) async {
-  //     try {
-  //       final response = await service.checkPayment(paymentId);
-
-  //       print(response);
-
-  //       if (response['data']['status'] == 'PAID') {
-  //         approved = true;
-
-  //         timer?.cancel();
-
-  //         notifyListeners();
-  //       }
-  //     } catch (e) {
-  //       print(e);
-  //     }
-  //   });
-  // }
-  //gerar qrcode manual com aprovacao automatica
+  /// Polls the backend until the payment is confirmed (status `PAID`) or the
+  /// polling window expires. Replaces the previous mocked auto-approval.
   void startChecking() {
-    timer?.cancel();
+    _timer?.cancel();
+    if (paymentId.isEmpty) return;
 
-    timer = Timer(const Duration(seconds: 10), () {
-      approved = true;
+    const interval = Duration(seconds: 4);
+    const maxAttempts = 75; // ~5 minutes
+    var attempts = 0;
 
-      notifyListeners();
+    _timer = Timer.periodic(interval, (timer) async {
+      attempts++;
+      try {
+        final payment = await service.checkPayment(paymentId);
+        if (payment['status'] == 'PAID') {
+          approved = true;
+          timer.cancel();
+          notifyListeners();
+          return;
+        }
+      } catch (e) {
+        // Keep polling on transient errors; just log them.
+        debugPrint('Error checking payment: $e');
+      }
+
+      if (attempts >= maxAttempts) {
+        timer.cancel();
+      }
     });
   }
 
   @override
   void dispose() {
-    timer?.cancel();
-
+    _timer?.cancel();
     super.dispose();
   }
 }
