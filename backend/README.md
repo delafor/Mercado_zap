@@ -27,6 +27,10 @@ O webhook responde rápido (`202`) e só enfileira o job; o worker é quem confi
 o status (nunca confiando cegamente no corpo do webhook) e persiste. Falhas são
 reprocessadas pelo BullMQ com retry/backoff.
 
+> Para um mergulho detalhado (ciclo da requisição, fluxos de pagamento e
+> webhook, modelo de dados, erros, segurança e decisões), veja
+> **[ARCHITECTURE.md](./ARCHITECTURE.md)**.
+
 Estrutura em camadas (`src/`):
 
 | Pasta | Responsabilidade |
