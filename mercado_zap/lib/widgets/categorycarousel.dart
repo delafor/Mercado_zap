@@ -60,9 +60,10 @@ class CategoryCarousel extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 5),
               decoration: BoxDecoration(
-                color: isSelected
-                    ? Theme.of(context).colorScheme.onPrimary
-                    : Colors.grey[200],
+                color:
+                    isSelected
+                        ? Theme.of(context).colorScheme.secondary
+                        : Colors.grey[200],
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Row(

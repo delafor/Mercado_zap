@@ -10,7 +10,6 @@ class BannerCarousel extends StatefulWidget {
 class _BannerCarouselState extends State<BannerCarousel> {
   late final PageController controller;
   static const List<String> images = [
-  
     'assets/banner/image2.jpg',
 
     'assets/banner/image4.png',
@@ -39,7 +38,6 @@ class _BannerCarouselState extends State<BannerCarousel> {
     //   }
     // });
 
-    
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       for (final image in images) {
         try {
@@ -73,7 +71,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
     }
 
     return SizedBox(
-      height: 150,
+      height: 160,
 
       child: PageView.builder(
         controller: controller,

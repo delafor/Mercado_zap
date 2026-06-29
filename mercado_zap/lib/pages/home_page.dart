@@ -141,7 +141,9 @@ class _HomePageState extends State<HomePage> {
                       } else {
                         await Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => AddressPage()),
+                          MaterialPageRoute(
+                            builder: (context) => AddressPage(),
+                          ),
                         );
                       }
 
@@ -155,7 +157,7 @@ class _HomePageState extends State<HomePage> {
                           height: 45,
 
                           decoration: BoxDecoration(
-                            color: colors.onSecondary,
+                            color: colors.secondary,
                             shape: BoxShape.circle,
                           ),
 
@@ -475,7 +477,7 @@ class _HomePageState extends State<HomePage> {
 
                                         width: 18,
                                         height: 18,
-
+                                        color: colors.secondary,
                                         cacheWidth: 60,
                                       ),
                                       const SizedBox(width: 5),

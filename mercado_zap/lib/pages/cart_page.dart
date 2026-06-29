@@ -43,8 +43,6 @@ class _CartPageState extends State<CartPage> {
     // toda vez que notifyListeners() for chamado, a tela reconstrói automaticamente
     final cart = context.watch<CartProvider>();
 
-    
-
     return Scaffold(
       appBar: AppBar(
         // leading: IconButton(
@@ -115,14 +113,7 @@ class _CartPageState extends State<CartPage> {
                   ],
                 ),
               )
-              : ListView.separated(
-                separatorBuilder: (BuildContext context, int index) {
-                  return const Divider(
-                    thickness: 1,
-                    height: 1,
-                    color: Colors.grey,
-                  );
-                },
+              : ListView.builder(
                 // cart.itens.length define quantos itens o ListView vai renderizar
                 itemCount: cart.itens.length,
                 itemBuilder: (context, index) {
@@ -138,14 +129,17 @@ class _CartPageState extends State<CartPage> {
                           mainAxisAlignment: MainAxisAlignment.start,
 
                           children: [
-                            Image.asset(
-                              item.urlImagem ?? '',
-                              width: 80,
-                              height: 80,
-                              filterQuality: FilterQuality.high,
+                            Padding(
+                              padding: const EdgeInsets.only(right: 12),
+                              child: Image.asset(
+                                item.urlImagem ?? '',
+                                width: 80,
+                                height: 80,
+                                filterQuality: FilterQuality.high,
+                              ),
                             ),
-                            VerticalDivider(thickness: 1.4, width: 18),
 
+                            // VerticalDivider(thickness: 1.4, width: 18),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
 
@@ -165,17 +159,15 @@ class _CartPageState extends State<CartPage> {
                                     color: colors.secondary,
                                   ),
                                 ),
-                                Transform.scale(
+                                CounterWidget(
                                   scale: 0.8,
-                                  child: CounterWidget(
-                                    counter: item.quantity,
-                                    onIncrease: () {
-                                      cart.adicionarItem(item);
-                                    },
-                                    onDecrease: () {
-                                      cart.removerItem(item);
-                                    },
-                                  ),
+                                  counter: item.quantity,
+                                  onIncrease: () {
+                                    cart.adicionarItem(item);
+                                  },
+                                  onDecrease: () {
+                                    cart.removerItem(item);
+                                  },
                                 ),
                               ],
                             ),
@@ -201,101 +193,141 @@ class _CartPageState extends State<CartPage> {
       bottomNavigationBar:
           cart.itens.isNotEmpty
               ? Padding(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
 
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 50,
-
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      try {
-                        final box = Hive.box('appBox');
-                        final addresses = box.get(
-                          'addresses',
-                          defaultValue: [],
-                        );
-                        if (addresses.isEmpty) {
-                          await showDialog(
-                            context: context,
-                            builder:
-                                (context) => AlertDialog(
-                                  title: const Text(
-                                    '[ Erro ] ao finalizar pedido',
-                                  ),
-                                  content: const Text(
-                                    'Nenhuma endereço cadastrado!',
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      child: const Text(
-                                        'Cancelar',
-                                        style: TextStyle(color: Colors.black),
-                                      ),
-
-                                      onPressed: () {
-                                        Navigator.pop(
-                                          context,
-                                        ); // fecha o dialog
-                                      },
-                                    ),
-                                    TextButton(
-                                      child: const Text(
-                                        'Adicionar',
-                                        style: TextStyle(color: Colors.black),
-                                      ),
-                                      onPressed: () {
-                                        Navigator.pop(
-                                          context,
-                                        ); // fecha o dialog
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) => const AddressPage(),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                          );
-                          return;
-                        }
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (_) => CheckoutPaymentPage(total: cart.total),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Total',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
                           ),
-                        );
-                      } catch (e) {
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(SnackBar(content: Text(e.toString())));
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: colors.secondary,
-                      minimumSize: const Size(double.infinity, 60),
-                      foregroundColor: colors.onSecondary,
-
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-
-                        side: BorderSide(color: colors.secondary),
-                      ),
-
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                    ),
-                    child: Text(
-                      'Comprar agora',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 18,
-                        color: colors.primary,
+                          Text(
+                            'R\$ ${cart.total.toStringAsFixed(2)}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w900,
+                              fontSize: 22,
+                              color: colors.secondary,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
+
+                    // opcional, mas recomendado
+                    Expanded(
+                      flex: 4,
+
+                      child: SizedBox(
+                        height: 55,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            try {
+                              final box = Hive.box('appBox');
+                              final addresses = box.get(
+                                'addresses',
+                                defaultValue: [],
+                              );
+                              if (addresses.isEmpty) {
+                                await showDialog(
+                                  context: context,
+                                  builder:
+                                      (context) => AlertDialog(
+                                        title: const Text(
+                                          '[ Erro ] ao finalizar pedido',
+                                        ),
+                                        content: const Text(
+                                          'Nenhuma endereço cadastrado!',
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            child: const Text(
+                                              'Cancelar',
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                              ),
+                                            ),
+
+                                            onPressed: () {
+                                              Navigator.pop(
+                                                context,
+                                              ); // fecha o dialog
+                                            },
+                                          ),
+                                          TextButton(
+                                            child: const Text(
+                                              'Adicionar',
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.pop(
+                                                context,
+                                              ); // fecha o dialog
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (_) =>
+                                                          const AddressPage(),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                );
+                                return;
+                              }
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (_) => CheckoutPaymentPage(
+                                        total: cart.total,
+                                      ),
+                                ),
+                              );
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(e.toString())),
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: colors.secondary,
+                            minimumSize: const Size(double.infinity, 60),
+                            foregroundColor: colors.onSecondary,
+
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+
+                              side: BorderSide(color: colors.secondary),
+                            ),
+
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                          ),
+                          child: Text(
+                            'Comprar agora',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 18,
+                              color: colors.primary,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               )
               : null,

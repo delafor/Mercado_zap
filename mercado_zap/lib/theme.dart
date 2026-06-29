@@ -7,7 +7,7 @@ class AppThemes {
       primary: Color(0xFFF0F1F3),
       primaryContainer: Color.fromARGB(255, 101, 100, 100),
       onPrimary: Color(0xFFFFAC65),
-      secondary: Color(0xFF49B6B1),
+      secondary: Color.fromARGB(255, 46, 135, 130),
       onSecondary: Color.fromARGB(255, 99, 188, 174),
 
       error: Color(0xFFBA1A1A),
