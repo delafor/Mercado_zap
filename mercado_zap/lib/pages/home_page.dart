@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:mercado_zap/Payments/checkout_payment_page.dart';
 import 'package:mercado_zap/models/Address.dart';
 import 'package:mercado_zap/models/cart_item.dart';
-import 'package:mercado_zap/pages/checkout_page.dart';
-import 'package:mercado_zap/pages/dialog_local.dart';
+
+import 'package:mercado_zap/pages/add_dialog_local.dart';
+import 'package:mercado_zap/pages/adress_page.dart';
 import 'package:mercado_zap/providers/product_provider.dart';
 import 'package:mercado_zap/widgets/BannerCarousel.dart';
 import 'package:mercado_zap/widgets/cardproduct.dart';
@@ -24,9 +26,9 @@ class _HomePageState extends State<HomePage> {
 
   late Box box;
 
-  String? _cachedLocation; // ✅ cache do endereço parseado
+  String? _cachedLocation; //  cache do endereço parseado
 
-  Timer? _debounce; // ✅ evita pesquisar a cada letra digitada
+  Timer? _debounce; //  evita pesquisar a cada letra digitada
 
   @override
   void initState() {
@@ -34,7 +36,7 @@ class _HomePageState extends State<HomePage> {
 
     box = Hive.box('appBox');
 
-    _cachedLocation = _parseLocation(); // ✅ parseia 1x na inicialização
+    _cachedLocation = _parseLocation(); //  parseia 1x na inicialização
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ProductProvider>(context, listen: false).carregarProdutos();
@@ -51,9 +53,10 @@ class _HomePageState extends State<HomePage> {
   String _parseLocation() {
     final data = box.get('addresses', defaultValue: <Map<String, dynamic>>[]);
 
-    final adresses = (data as List)
-        .map((item) => Address.fromMap(Map<String, dynamic>.from(item)))
-        .toList();
+    final adresses =
+        (data as List)
+            .map((item) => Address.fromMap(Map<String, dynamic>.from(item)))
+            .toList();
 
     if (adresses.isEmpty) {
       return 'Adicione um endereço';
@@ -65,7 +68,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _buscarProduto(String value) {
-    // ✅ debounce melhora performance da pesquisa
+    //  debounce melhora performance da pesquisa
     _debounce?.cancel();
 
     _debounce = Timer(const Duration(milliseconds: 400), () {
@@ -89,10 +92,7 @@ class _HomePageState extends State<HomePage> {
                 text: 'Hyper',
                 style: TextStyle(color: colors.onPrimary),
               ),
-              TextSpan(
-                text: 'Mart',
-                style: TextStyle(color: colors.secondary),
-              ),
+              TextSpan(text: 'Mart', style: TextStyle(color: colors.secondary)),
             ],
           ),
         ),
@@ -101,7 +101,7 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(3),
           child: Image.asset(
             'assets/logo/logo01.png',
-            cacheWidth: 120, // ✅ imagem mais leve
+            cacheWidth: 120, // imagem mais leve
           ),
         ),
 
@@ -128,15 +128,24 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   InkWell(
                     onTap: () async {
+                      final data = box.get('addresses', defaultValue: []);
                       // if (_cachedLocation != null) return;
                       //Logica se quiser editar o endereço
-
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AddLocalDialog(),
-                        ),
-                      );
+                      if (data.isEmpty) {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AddLocalDialog(),
+                          ),
+                        );
+                      } else {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddressPage(),
+                          ),
+                        );
+                      }
 
                       //set
                     },
@@ -148,7 +157,7 @@ class _HomePageState extends State<HomePage> {
                           height: 45,
 
                           decoration: BoxDecoration(
-                            color: colors.onSecondary,
+                            color: colors.secondary,
                             shape: BoxShape.circle,
                           ),
 
@@ -269,7 +278,7 @@ class _HomePageState extends State<HomePage> {
 
           // const SizedBox(child: BannerCarousel())
 
-          // ✅ somente grid escuta provider
+          // somente grid escuta provider
           Consumer<ProductProvider>(
             builder: (context, products, child) {
               return SliverPadding(
@@ -317,15 +326,16 @@ class _HomePageState extends State<HomePage> {
                                     // cacheWidth: 120,
                                     filterQuality: FilterQuality.low,
 
-                                    errorBuilder: (_, __, ___) => Container(
-                                      color: colors.primaryContainer,
+                                    errorBuilder:
+                                        (_, __, ___) => Container(
+                                          color: colors.primaryContainer,
 
-                                      child: Icon(
-                                        Icons.image_not_supported,
+                                          child: Icon(
+                                            Icons.image_not_supported,
 
-                                        color: colors.onPrimaryContainer,
-                                      ),
-                                    ),
+                                            color: colors.onPrimaryContainer,
+                                          ),
+                                        ),
                                   ),
                                 ),
                               ),
@@ -380,18 +390,22 @@ class _HomePageState extends State<HomePage> {
 
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    // final cartItem = CartItem.fromProduct(
-                                    //   product,
-                                    // );
-
-                                    // context.read<CartProvider>().adicionarItem(
-                                    //   cartItem,
-                                    // );
-
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => CheckoutPage(),
+                                        builder:
+                                            (_) => CheckoutPaymentPage(
+                                              total: product.price,
+                                              produtos: [
+                                                CartItem(
+                                                  productId: product.id,
+                                                  name: product.name,
+                                                  price: product.price,
+                                                  quantity: 1,
+                                                  id: '',
+                                                ),
+                                              ],
+                                            ),
                                       ),
                                     );
                                   },
@@ -463,7 +477,7 @@ class _HomePageState extends State<HomePage> {
 
                                         width: 18,
                                         height: 18,
-
+                                        color: colors.secondary,
                                         cacheWidth: 60,
                                       ),
                                       const SizedBox(width: 5),

@@ -39,8 +39,9 @@ class CartProvider with ChangeNotifier {
       (i) => i.productId == item.productId,
     ); //aqqui preciso passar a quantidade do contador la,pra marcar qquantos produtos vai pro carrinho
     if (index >= 0) {
-      _itens[index].quantity += item.quantity;
+      _itens[index].quantity++;
     } else {
+      item.quantity = 1;
       _itens.add(item);
     }
     _salvar(); // ← persiste
@@ -57,6 +58,17 @@ class CartProvider with ChangeNotifier {
     }
     _salvar(); // ← persiste
     notifyListeners();
+  }
+
+  void removerProduto(CartItem item) {
+    _itens.removeWhere((i) => i.productId == item.productId);
+
+    _salvar();
+    notifyListeners();
+  }
+
+  int get totalItens {
+    return itens.fold(0, (total, item) => total + item.quantity);
   }
 
   void limpar() {

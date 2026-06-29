@@ -10,9 +10,8 @@ class BannerCarousel extends StatefulWidget {
 class _BannerCarouselState extends State<BannerCarousel> {
   late final PageController controller;
   static const List<String> images = [
-    'assets/banner/image1.png',
     'assets/banner/image2.jpg',
-    'assets/banner/image3.png',
+
     'assets/banner/image4.png',
     'assets/banner/image5.png',
     // 'lib/assets/banner/image5.png',
@@ -33,9 +32,24 @@ class _BannerCarouselState extends State<BannerCarousel> {
 
     //  pré-carrega imagens depois que tela abre
     // melhora velocidade no primeiro swipe
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   for (final image in images) {
+    //     precacheImage(AssetImage(image), context);
+    //   }
+    // });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       for (final image in images) {
-        precacheImage(AssetImage(image), context);
+        try {
+          print('PRECACHE: $image');
+
+          await precacheImage(AssetImage(image), context);
+
+          print('OK: $image');
+        } catch (e) {
+          print('ERRO NA IMAGEM: $image');
+          print(e);
+        }
       }
     });
   }
@@ -57,7 +71,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
     }
 
     return SizedBox(
-      height: 150,
+      height: 160,
 
       child: PageView.builder(
         controller: controller,

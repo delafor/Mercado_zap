@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:mercado_zap/models/cart_item.dart';
 
 class Pedido {

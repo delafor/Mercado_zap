@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mercado_zap/pages/cart_page.dart';
-import 'package:mercado_zap/pages/checkout_page.dart';
+
 import 'package:mercado_zap/pages/home_page.dart';
 import 'package:mercado_zap/pages/pedidos.dart';
-import 'package:mercado_zap/providers/product_provider.dart';
-import 'package:provider/provider.dart';
+
 import 'package:mercado_zap/providers/cart_provider.dart';
+import 'package:provider/provider.dart';
 
 class MainPage extends StatefulWidget {
   // const MainPage({Key? key}) : super(key: key);
@@ -19,6 +19,8 @@ class _MainPageState extends State<MainPage> {
   final List<Widget> _telas = [HomePage(), CartPage(), PedidosPage()];
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
     final cart = Provider.of<CartProvider>(context);
     final quantidade = cart.quantidadeTotal;
     //se caso eu precise exibir quntidade de tal produto eu chamo igual e so coloco
@@ -33,6 +35,8 @@ class _MainPageState extends State<MainPage> {
       body: _telas[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
+        selectedItemColor: colors.onPrimary,
+        unselectedItemColor: Colors.grey,
         onTap: (index) {
           setState(() {
             _currentIndex = index;

@@ -5,28 +5,36 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.9.2
+  sdk: ">=3.7.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
+
   cupertino_icons: ^1.0.8
   provider: ^6.1.5+1
   hive: ^2.2.3
-  hive_flutter: ^1.1.0    # alterado para versão compatível
+  hive_flutter: ^1.1.0
   path_provider: ^2.1.5
-  google_maps_flutter: ^2.14.0
-  firebase_core: ^4.3.0
+
+  firebase_core: ^4.9.0
   firebase_storage: ^13.0.5
-  cloud_firestore: ^6.1.1
+  cloud_firestore: ^6.4.1
   uuid: ^4.5.2
   supabase_flutter: ^2.12.0
   hive_generator: ^2.0.1
   build_runner: ^2.4.13
+  dio: ^5.9.2
+  flutter_animate: ^4.5.2
+  lottie: ^3.3.3
+  pretty_qr_code: ^3.6.0
+  flutter_svg: ^2.3.0
+  # abacatepay: ^1.0.2+7
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
   flutter_lints: ^5.0.0
   hive_generator: ^2.0.1
   build_runner: ^2.4.8
@@ -35,17 +43,18 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/Icons/cartIcon2.png
     - assets/logo/logo01.png
-    - assets/banner/image1.png
+  
     - assets/banner/image2.jpg
-    - assets/banner/image3.png
+
     - assets/banner/image4.png
     - assets/banner/image5.png
-    - assets/banner/baixados.jpg
+  
     - assets/Icons/cartIcon.png
+    - assets/Icons/lixeira.svg
     - assets/images/arroz.png
     - assets/images/biscoito.png
     - assets/images/refri.png
     - assets/images/feijao.png
-
-    - assets/images/
+    - assets/images/image4.png

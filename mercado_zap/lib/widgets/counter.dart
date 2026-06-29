@@ -4,23 +4,26 @@ class CounterWidget extends StatelessWidget {
   final int counter;
   final VoidCallback onIncrease;
   final VoidCallback onDecrease;
+  final double scale;
 
   const CounterWidget({
     super.key,
     required this.counter,
     required this.onIncrease,
     required this.onDecrease,
+    this.scale = 1.0,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    return Align(
+    return Transform.scale(
+      scale: scale,
       // precisa pra poder reduzir as bordas, p o container esticar automaticamente para os lados
       alignment: Alignment.centerLeft,
       child: Container(
-        margin: const EdgeInsets.all(15),
+        margin: const EdgeInsets.only(top: 15),
         padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),

@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:110294184764:android:1f74b3f450e75b455b6439",
+        "mobilesdk_app_id": "1:110294184764:android:2382b1c7d5f7fc9c5b6439",
         "android_client_info": {
-          "package_name": "Mercado.zap"
+          "package_name": "com.mercadozap.app"
         }
       },
       "oauth_client": [],

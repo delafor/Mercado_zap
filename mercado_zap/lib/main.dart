@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mercado_zap/models/address.dart';
+import 'package:mercado_zap/providers/payment_provider.dart';
 import 'package:mercado_zap/theme.dart';
 import 'package:provider/provider.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:provider/provider.dart';
 import 'package:mercado_zap/providers/cart_provider.dart';
 import 'database/seed_database.dart';
 import 'pages/main_page.dart';
-import 'providers/cart_provider.dart';
 import 'providers/product_provider.dart';
 import 'providers/pdv_provider.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,15 +17,18 @@ void main() async {
   await Hive.initFlutter();
 
   await Hive.openBox('appBox');
+  await Hive.openBox('pedidos');
 
   await Hive.openBox<Address>('addresses');
-  await Hive.box('appBox').clear(); // ← limpa TUDO do appBox
+  // await Hive.box('appBox').clear(); // ← limpa TUDO do appBox
   await SeedDatabase.seed();
-
+  final cartProvider = CartProvider();
+  await cartProvider.carregarCarrinho();
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => PaymentProvider()),
+        ChangeNotifierProvider<CartProvider>.value(value: cartProvider),
         ChangeNotifierProvider(create: (_) => ProductProvider()),
         ChangeNotifierProxyProvider<CartProvider, PdvProvider>(
           create: (context) => PdvProvider(cart: context.read<CartProvider>()),
