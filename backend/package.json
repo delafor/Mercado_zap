@@ -1,0 +1,19 @@
+{
+  "name": "mercado-zap-backend",
+  "version": "1.0.0",
+  "description": "Payment proxy for the Mercado Zap app (AbacatePay PIX integration).",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.17.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  }
+}
