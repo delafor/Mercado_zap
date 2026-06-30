@@ -23,8 +23,17 @@ class _PixPaymentPageState extends State<PixPaymentPage> {
 
     Future.microtask(() async {
       final provider = context.read<PaymentProvider>();
+      final cart = context.read<CartProvider>();
+      final items =
+          cart.itens.map((item) {
+            final productId = int.tryParse(item.productId);
+            if (productId == null) {
+              throw FormatException('Invalid product id: ${item.productId}');
+            }
+            return {'productId': productId, 'quantity': item.quantity};
+          }).toList();
 
-      await provider.createPayment(amount: widget.amount, provider: null);
+      await provider.createPayment(items: items, provider: null);
 
       provider.startChecking();
     });
