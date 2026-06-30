@@ -1,6 +1,7 @@
 class Product {
-  String id;
-  String name;
+  final String id;
+  
+  final String name;
   String category;
   String description;
   String? urlImagem;
@@ -19,7 +20,7 @@ class Product {
 
   factory Product.fromMap(Map<String, dynamic> map) {
     return Product(
-      id: map['id']?.toString() ?? '',
+      id: map['id'] as String,
       name: map['name']?.toString() ?? '',
       category: map['category']?.toString() ?? '',
       description: map['description']?.toString() ?? '',

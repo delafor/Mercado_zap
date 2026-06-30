@@ -1,12 +1,14 @@
 import 'package:hive_flutter/adapters.dart';
+import 'package:uuid/uuid.dart';
 
 class SeedDatabase {
   static Future<void> seed() async {
     final box = Hive.box('appBox');
+    final uuid = Uuid();
 
     final novosProdutos = [
       {
-        'id': 1,
+        'id': uuid.v4(),
         'name': 'Arroz Branco 5kg',
         'category': 'Grãos',
         'description': 'Arroz tipo 1, pacote de 5kg',

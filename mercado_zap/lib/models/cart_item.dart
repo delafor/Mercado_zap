@@ -1,7 +1,10 @@
 import 'package:mercado_zap/models/product.dart';
+import 'package:uuid/uuid.dart';
+
+final uuid = Uuid();
 
 class CartItem {
-  String id;
+  final String id;
   String productId;
   String name;
   int quantity;
@@ -20,7 +23,7 @@ class CartItem {
   // ← ADICIONE ISSO
   factory CartItem.fromProduct(Product product, {int quantity = 1}) {
     return CartItem(
-      id: DateTime.now().millisecondsSinceEpoch.toString(), 
+      id: uuid.v4(),
       productId: product.id,
       name: product.name,
       price: product.price,
