@@ -20,7 +20,7 @@ class CartItem {
   // ← ADICIONE ISSO
   factory CartItem.fromProduct(Product product, {int quantity = 1}) {
     return CartItem(
-      id: DateTime.now().millisecondsSinceEpoch.toString(), // gera um id único
+      id: DateTime.now().millisecondsSinceEpoch.toString(), 
       productId: product.id,
       name: product.name,
       price: product.price,

@@ -68,7 +68,7 @@ class _PixPaymentPageState extends State<PixPaymentPage> {
                     return {
                       'name': item.name,
                       'price': item.price,
-                      // 'total': item.price + item.quantity,
+                   
                       'quantity': item.quantity,
                     };
                   }).toList(),
@@ -87,8 +87,7 @@ class _PixPaymentPageState extends State<PixPaymentPage> {
         } catch (e, stackTrace) {
           debugPrint(
             'Erro ao salvar pedido: $e\n$stackTrace',
-          ); // se o hive dar erro vou saber o resultado
-          // Mesmo com erro, navega para teste
+          ); 
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Erro ao salvar pedido')),

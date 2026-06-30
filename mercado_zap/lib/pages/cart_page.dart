@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 import 'package:mercado_zap/Payments/checkout_payment_page.dart';
-import 'package:mercado_zap/pages/add_dialog_local.dart';
+
 import 'package:mercado_zap/pages/adress_page.dart';
 
 import 'package:mercado_zap/providers/cart_provider.dart';
@@ -10,7 +10,7 @@ import 'package:mercado_zap/providers/cart_provider.dart';
 import 'package:mercado_zap/widgets/counter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-// import 'package:mercado_zap/widgets/cardproduct.dart/'
+
 
 class CartPage extends StatefulWidget {
   @override
@@ -39,16 +39,12 @@ class _CartPageState extends State<CartPage> {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
 
-    // context.watch fica "escutando" o CartProvider
-    // toda vez que notifyListeners() for chamado, a tela reconstrói automaticamente
+    
     final cart = context.watch<CartProvider>();
 
     return Scaffold(
       appBar: AppBar(
-        // leading: IconButton(
-        //   icon: const Icon(Icons.arrow_back),
-        //   onPressed: () => Navigator.pop(context),
-        // ),
+     
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -77,9 +73,7 @@ class _CartPageState extends State<CartPage> {
         ],
       ),
       body:
-          // cart.itens é a lista de itens do carrinho
-          // .isEmpty verifica se a lista está vazia
-          // se vazia, mostra mensagem, senão mostra a lista
+       
           cart.itens.isEmpty
               ? Center(
                 child: Row(

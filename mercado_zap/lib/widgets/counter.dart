@@ -20,7 +20,7 @@ class CounterWidget extends StatelessWidget {
     final colors = theme.colorScheme;
     return Transform.scale(
       scale: scale,
-      // precisa pra poder reduzir as bordas, p o container esticar automaticamente para os lados
+    
       alignment: Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.only(top: 15),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mercado_zap/models/category.dart';
+
 import 'package:mercado_zap/providers/product_provider.dart';
 import 'package:provider/provider.dart';
 

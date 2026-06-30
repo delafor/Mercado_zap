@@ -24,9 +24,9 @@ class Pedido {
 
   String gerarMensagem() {
     final buffer = StringBuffer();
-    // Cria um StringBuffer, que é mais eficiente que concatenar strings com +
-    // Ele permite montar o texto aos poucos
-    buffer.writeln('🧾 Pedido $id'); // Adiciona o título do pedido com o ID
+
+  
+    buffer.writeln('🧾 Pedido $id'); 
 
     for (final item in itens) {
       buffer.writeln(
@@ -34,12 +34,12 @@ class Pedido {
       );
     }
     ;
-    // Linha em branco antes do total
+   
     buffer.writeln('');
-    // Adiciona o valor total do pedido formatado com duas casas decimais
+  
     buffer.writeln('Total: $total');
-    // Converte tudo que foi escrito no buffer para String
-    // e retorna a mensagem final
+   
+    
     return buffer.toString();
   }
 

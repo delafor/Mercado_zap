@@ -31,10 +31,7 @@ class PdvProvider with ChangeNotifier {
     if (itens.isEmpty) return;
 
     final id = DateTime.now().microsecondsSinceEpoch.toString();
-    // formatar data
-    // fazer a logica
 
-    //gerar o pedido
     final pedido = Pedido(
       id: id,
       itens: itens,
@@ -44,11 +41,10 @@ class PdvProvider with ChangeNotifier {
     //salvar no banco
     final box = Hive.box('mybox');
     await box.put(id, pedido.toMap());
-// aqui vai ver salvando no bacno depois modelar conforeme preciso
-    //gerar mensagem
+
   final msg = pedido.gerarMensagem();
     //limpar carrinho
-      cart.limpar(); // vai ser dentro do cart_provider
+      cart.limpar(); 
 
 
     _status = Vendastatus.Finalizada;

@@ -1,6 +1,6 @@
 class Order {
   String id;
-  List<Map<String, dynamic>> items; // lista de itens (CartItem.toMap())
+  List<Map<String, dynamic>> items; 
   String status;
   double total;
   String date;

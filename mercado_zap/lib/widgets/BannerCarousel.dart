@@ -14,7 +14,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
 
     'assets/banner/image4.png',
     'assets/banner/image5.png',
-    // 'lib/assets/banner/image5.png',
+  
   ];
 
   final int initialPage = 1000;
@@ -23,20 +23,12 @@ class _BannerCarouselState extends State<BannerCarousel> {
   void initState() {
     super.initState();
 
-    // controller criado apenas 1x
-    // evita recriar toda rebuild
+    
     controller = PageController(
       viewportFraction: 0.85,
       initialPage: initialPage,
     );
 
-    //  pré-carrega imagens depois que tela abre
-    // melhora velocidade no primeiro swipe
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   for (final image in images) {
-    //     precacheImage(AssetImage(image), context);
-    //   }
-    // });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       for (final image in images) {
@@ -56,7 +48,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
 
   @override
   void dispose() {
-    //  libera memória do controller
+    
     controller.dispose();
     super.dispose();
   }
@@ -76,11 +68,10 @@ class _BannerCarouselState extends State<BannerCarousel> {
       child: PageView.builder(
         controller: controller,
 
-        //  scroll mais fluido no Android
+  
         physics: const BouncingScrollPhysics(),
 
-        //  não precisa informar itemCount
-        // deixa infinito mesmo
+      
         itemBuilder: (context, index) {
           final currentIndex = index % images.length;
 
@@ -88,8 +79,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
             padding: const EdgeInsets.all(8),
 
             child: RepaintBoundary(
-              // evita repintar widgets vizinhos
-              // melhora FPS no scroll
+       
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(15),
 
@@ -98,10 +88,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
 
                   fit: BoxFit.cover,
 
-                  // imagem reduzida pra tela
-                  //cacheWidth: 180,
-
-                  //  render mais leve
+            
                   filterQuality: FilterQuality.medium,
 
                   errorBuilder: (_, __, ___) {

@@ -26,9 +26,9 @@ class _HomePageState extends State<HomePage> {
 
   late Box box;
 
-  String? _cachedLocation; //  cache do endereço parseado
+  String? _cachedLocation; 
 
-  Timer? _debounce; //  evita pesquisar a cada letra digitada
+  Timer? _debounce; 
 
   @override
   void initState() {
@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
 
     box = Hive.box('appBox');
 
-    _cachedLocation = _parseLocation(); //  parseia 1x na inicialização
+    _cachedLocation = _parseLocation();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ProductProvider>(context, listen: false).carregarProdutos();
@@ -45,8 +45,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    _productController.dispose(); // evita memory leak
-    _debounce?.cancel(); // evita timer preso na memória
+    _productController.dispose(); 
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -101,7 +101,7 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(3),
           child: Image.asset(
             'assets/logo/logo01.png',
-            cacheWidth: 120, // imagem mais leve
+            cacheWidth: 120, 
           ),
         ),
 
@@ -117,7 +117,7 @@ class _HomePageState extends State<HomePage> {
 
       body: CustomScrollView(
         slivers: [
-          // topo q some ao subir/ scrollar para cima
+       
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
