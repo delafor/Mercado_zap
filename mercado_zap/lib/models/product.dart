@@ -1,6 +1,6 @@
 class Product {
   final String id;
-  
+
   final String name;
   String category;
   String description;
@@ -20,7 +20,7 @@ class Product {
 
   factory Product.fromMap(Map<String, dynamic> map) {
     return Product(
-      id: map['id'] as String,
+      id: map['id']?.toString() ?? '',
       name: map['name']?.toString() ?? '',
       category: map['category']?.toString() ?? '',
       description: map['description']?.toString() ?? '',

@@ -29,16 +29,12 @@ class ProductProvider with ChangeNotifier {
   void carregarProdutos() async {
     final data = ReadDatabase().readProducts();
 
-    for (var p in data) {
-      print('PRODUTO: ${p.name} | IMAGEM: ${p.urlImagem}');
-    }
-
     _allproducts = List.from(data);
     _products = List.from(data);
     notifyListeners();
   }
 
-  void adiconarProduto(Product product) async {
+  void adicionarProduto(Product product) async {
     _products.add(product);
     _allproducts.add(product);
     notifyListeners();
@@ -54,12 +50,13 @@ class ProductProvider with ChangeNotifier {
     if (query.isEmpty) {
       _products = List.from(_allproducts);
     } else {
-      _products = _allproducts
-          .where(
-            (element) =>
-                element.name.toLowerCase().contains(query.toLowerCase()),
-          )
-          .toList();
+      _products =
+          _allproducts
+              .where(
+                (element) =>
+                    element.name.toLowerCase().contains(query.toLowerCase()),
+              )
+              .toList();
     }
     notifyListeners();
   }

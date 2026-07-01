@@ -26,7 +26,7 @@ class _PedidosPageState extends State<PedidosPage> {
             itemCount: box.length,
             itemBuilder: (context, index) {
               final pedidos = Map<String, dynamic>.from(box.getAt(index));
-              debugPrint(pedidos.toString());
+
               return Card(
                 margin: const EdgeInsets.all(8),
                 child: ListTile(

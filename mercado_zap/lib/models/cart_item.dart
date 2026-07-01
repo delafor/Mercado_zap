@@ -32,7 +32,7 @@ class CartItem {
     );
   }
 
-  CartItem.formMap(Map<String, dynamic> map)
+  CartItem.fromMap(Map<String, dynamic> map)
     : id = map['id'],
       productId = map['productId'],
       name = map['name'],

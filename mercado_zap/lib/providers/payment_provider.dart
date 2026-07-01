@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../services/payment_service.dart';
@@ -32,15 +33,11 @@ class PaymentProvider extends ChangeNotifier {
 
       final response = await service.createPixPayment(amount);
 
-      print('RESPOSTA API:');
-      print(response);
-
       final data = response['data'];
 
       //qrCode = data['qrCodeImage'];
       pixCode = data['brCode'];
-      print('PIX CODE: $pixCode');
-      print('TAMANHO: ${pixCode.length}');
+
       paymentId = data['id'];
 
       loading = false;
@@ -51,12 +48,14 @@ class PaymentProvider extends ChangeNotifier {
 
       notifyListeners();
 
-      print('ERRO AO GERAR PIX');
+      if (kDebugMode) {
+        print('ERRO AO GERAR PIX');
+      }
       print(e);
     }
   }
 
-    void startChecking() {
+  void startChecking() {
     timer?.cancel();
 
     timer = Timer(const Duration(seconds: 10), () {

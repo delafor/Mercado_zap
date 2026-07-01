@@ -2,14 +2,14 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
-import 'package:mercado_zap/models/Address.dart';
+import 'package:mercado_zap/models/address.dart';
 import 'package:mercado_zap/widgets/checkbox.dart';
 import 'package:mercado_zap/widgets/customformfield.dart';
 
 class AddLocalDialog extends StatefulWidget {
   const AddLocalDialog({Key? key}) : super(key: key);
   @override
-  _AddLocalDialogState createState() => _AddLocalDialogState();
+  State<AddLocalDialog> createState() => _AddLocalDialogState();
 }
 
 class _AddLocalDialogState extends State<AddLocalDialog> {

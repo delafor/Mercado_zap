@@ -11,7 +11,8 @@ class CheckoutPaymentPage extends StatefulWidget {
   final List<CartItem>? produtos;
 
   const CheckoutPaymentPage({super.key, this.produtos, required this.total});
-  _CheckoutPaymentPage createState() => _CheckoutPaymentPage();
+  @override
+  State<CheckoutPaymentPage> createState() => _CheckoutPaymentPage();
 }
 
 class _CheckoutPaymentPage extends State<CheckoutPaymentPage> {
@@ -25,7 +26,7 @@ class _CheckoutPaymentPage extends State<CheckoutPaymentPage> {
     final cartProvider = context.watch<CartProvider>();
 
     final itens = widget.produtos ?? cartProvider.itens;
-    final cart = context.watch<CartProvider>();
+  
     double totalFinal = widget.total + taxaEntrega;
 
     return Scaffold(

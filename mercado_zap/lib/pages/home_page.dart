@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:mercado_zap/Payments/checkout_payment_page.dart';
-import 'package:mercado_zap/models/Address.dart';
+import 'package:mercado_zap/payments/checkout_payment_page.dart';
+import 'package:mercado_zap/models/address.dart';
 import 'package:mercado_zap/models/cart_item.dart';
 
 import 'package:mercado_zap/pages/add_dialog_local.dart';
-import 'package:mercado_zap/pages/adress_page.dart';
+import 'package:mercado_zap/pages/address_page.dart';
 import 'package:mercado_zap/providers/product_provider.dart';
-import 'package:mercado_zap/widgets/BannerCarousel.dart';
+import 'package:mercado_zap/widgets/bannercarousel.dart';
 import 'package:mercado_zap/widgets/cardproduct.dart';
 import 'package:mercado_zap/widgets/categorycarousel.dart';
 import 'package:provider/provider.dart';

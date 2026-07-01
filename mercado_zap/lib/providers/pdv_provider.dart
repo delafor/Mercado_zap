@@ -25,7 +25,7 @@ class PdvProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> finalizarVendar() async {
+  Future<void> finalizarVenda() async {
     final itens = cart.itens;
     final total = cart.total;
     if (itens.isEmpty) return;

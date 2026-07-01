@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
-import 'package:mercado_zap/Payments/checkout_payment_page.dart';
+import 'package:mercado_zap/payments/checkout_payment_page.dart';
 
-import 'package:mercado_zap/pages/adress_page.dart';
+import 'package:mercado_zap/pages/address_page.dart';
 
 import 'package:mercado_zap/providers/cart_provider.dart';
 
@@ -11,10 +11,10 @@ import 'package:mercado_zap/widgets/counter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-
 class CartPage extends StatefulWidget {
+  const CartPage({super.key});
   @override
-  _CartPageState createState() => _CartPageState();
+  State<CartPage> createState() => _CartPageState();
 }
 
 class _CartPageState extends State<CartPage> {
@@ -39,12 +39,10 @@ class _CartPageState extends State<CartPage> {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
 
-    
     final cart = context.watch<CartProvider>();
 
     return Scaffold(
       appBar: AppBar(
-     
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -73,7 +71,6 @@ class _CartPageState extends State<CartPage> {
         ],
       ),
       body:
-       
           cart.itens.isEmpty
               ? Center(
                 child: Row(
@@ -114,70 +111,68 @@ class _CartPageState extends State<CartPage> {
                   // busca o item da posição atual da lista
                   final item = cart.itens[index];
 
-                  return Container(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
+                  return Padding(
+                    padding: const EdgeInsets.all(12),
 
-                      child: IntrinsicHeight(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                    child: IntrinsicHeight(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
 
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(right: 12),
-                              child: Image.asset(
-                                item.urlImagem ?? '',
-                                width: 80,
-                                height: 80,
-                                filterQuality: FilterQuality.high,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 12),
+                            child: Image.asset(
+                              item.urlImagem ?? '',
+                              width: 80,
+                              height: 80,
+                              filterQuality: FilterQuality.high,
+                            ),
+                          ),
+
+                          // VerticalDivider(thickness: 1.4, width: 18),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+
+                            children: [
+                              Text(
+                                item.name,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
                               ),
-                            ),
-
-                            // VerticalDivider(thickness: 1.4, width: 18),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-
-                              children: [
-                                Text(
-                                  item.name,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
+                              Text(
+                                'R\$ ${(item.price * item.quantity).toStringAsFixed(2)}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 16,
+                                  color: colors.secondary,
                                 ),
-                                Text(
-                                  'R\$ ${(item.price * item.quantity).toStringAsFixed(2)}',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 16,
-                                    color: colors.secondary,
-                                  ),
-                                ),
-                                CounterWidget(
-                                  scale: 0.8,
-                                  counter: item.quantity,
-                                  onIncrease: () {
-                                    cart.adicionarItem(item);
-                                  },
-                                  onDecrease: () {
-                                    cart.removerItem(item);
-                                  },
-                                ),
-                              ],
-                            ),
-                            const Spacer(),
-                            IconButton(
-                              icon: SvgPicture.asset(
-                                'assets/Icons/lixeira.svg',
-                                width: 24,
-                                height: 24,
                               ),
-                              onPressed: () {
-                                cart.removerProduto(item);
-                              },
+                              CounterWidget(
+                                scale: 0.8,
+                                counter: item.quantity,
+                                onIncrease: () {
+                                  cart.adicionarItem(item);
+                                },
+                                onDecrease: () {
+                                  cart.removerItem(item);
+                                },
+                              ),
+                            ],
+                          ),
+                          const Spacer(),
+                          IconButton(
+                            icon: SvgPicture.asset(
+                              'assets/Icons/lixeira.svg',
+                              width: 24,
+                              height: 24,
                             ),
-                          ],
-                        ),
+                            onPressed: () {
+                              cart.removerProduto(item);
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   );

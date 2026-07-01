@@ -17,7 +17,7 @@ class SeedDatabase {
         'price': 25.90,
       },
       {
-        'id': 2,
+        'id': uuid.v4(),
         'name': 'Feijão Carioca 1kg',
         'category': 'Grãos',
         'description': 'Feijão carioca tipo 1',
@@ -26,7 +26,7 @@ class SeedDatabase {
         'price': 8.50,
       },
       {
-        'id': 3,
+        'id': uuid.v4(),
         'name': 'Biscoito Recheado 140g',
         'category': 'Snacks',
         'description': 'Biscoito sabor chocolate',
@@ -35,7 +35,7 @@ class SeedDatabase {
         'price': 3.50,
       },
       {
-        'id': 4,
+        'id': uuid.v4(),
         'name': 'Refrigerante Cola 2L',
         'category': 'Bebidas',
         'description': 'Refrigerante sabor cola',
@@ -44,7 +44,7 @@ class SeedDatabase {
         'price': 8.99,
       },
       {
-        'id': 5,
+        'id': uuid.v4(),
         'name': 'carrinho 1kg',
         'category': 'Bebidas',
         'description': 'Refrigerante sabor cola',

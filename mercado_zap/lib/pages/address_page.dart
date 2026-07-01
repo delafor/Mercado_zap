@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
-import 'package:mercado_zap/models/Address.dart';
+import 'package:mercado_zap/models/address.dart';
 import 'package:mercado_zap/widgets/customformfield.dart';
 
 class AddressPage extends StatefulWidget {

@@ -25,8 +25,7 @@ class Pedido {
   String gerarMensagem() {
     final buffer = StringBuffer();
 
-  
-    buffer.writeln('🧾 Pedido $id'); 
+    buffer.writeln('🧾 Pedido $id');
 
     for (final item in itens) {
       buffer.writeln(
@@ -34,12 +33,11 @@ class Pedido {
       );
     }
     ;
-   
+
     buffer.writeln('');
-  
+
     buffer.writeln('Total: $total');
-   
-    
+
     return buffer.toString();
   }
 

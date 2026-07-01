@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mercado_zap/Payments/checkout_payment_page.dart';
+import 'package:mercado_zap/payments/checkout_payment_page.dart';
 import 'package:mercado_zap/models/cart_item.dart';
 import 'package:mercado_zap/models/product.dart';
 
