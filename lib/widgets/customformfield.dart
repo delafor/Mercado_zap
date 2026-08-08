@@ -31,8 +31,7 @@ class CustomTextField extends StatelessWidget {
     this.maxLines,
     this.minLines,
     this.errorText,
-    this.inputFormatters, // List<dynamic>
-    // required OutlineInputBorder focusedBorder,
+    this.inputFormatters, 
   }) : super(key: key);
 
   @override

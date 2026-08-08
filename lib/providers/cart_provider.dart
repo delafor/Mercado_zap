@@ -12,7 +12,7 @@ class CartProvider with ChangeNotifier {
   double get total =>
       _itens.fold(0, (soma, item) => soma + (item.price * item.quantity));
 
-  // ← CHAME ISSO NO INICIO DO APP
+
   Future<void> carregarCarrinho() async {
     final data = _box.get('carrinho', defaultValue: []);
     _itens.clear();
@@ -26,10 +26,10 @@ class CartProvider with ChangeNotifier {
     return _itens.fold(
       0,
       (soma, item) => soma + item.quantity,
-    ); // eplicar melhhor
+    ); 
   }
 
-  // ← SALVA NO HIVE SEMPRE QUE MUDAR
+
   void _salvar() {
     _box.put('carrinho', _itens.map((e) => e.toMap()).toList());
   }
@@ -37,14 +37,14 @@ class CartProvider with ChangeNotifier {
   void adicionarItem(CartItem item) {
     final index = _itens.indexWhere(
       (i) => i.productId == item.productId,
-    ); //aqqui preciso passar a quantidade do contador la,pra marcar qquantos produtos vai pro carrinho
+    ); 
     if (index >= 0) {
       _itens[index].quantity++;
     } else {
       item.quantity = 1;
       _itens.add(item);
     }
-    _salvar(); // ← persiste
+    _salvar(); // 
     notifyListeners();
   }
 
@@ -56,7 +56,7 @@ class CartProvider with ChangeNotifier {
     } else {
       _itens.removeAt(index);
     }
-    _salvar(); // ← persiste
+    _salvar(); 
     notifyListeners();
   }
 
@@ -73,7 +73,7 @@ class CartProvider with ChangeNotifier {
 
   void limpar() {
     _itens.clear();
-    _salvar(); // ← persiste
+    _salvar(); // 
     notifyListeners();
   }
 }

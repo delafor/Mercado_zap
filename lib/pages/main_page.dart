@@ -8,7 +8,7 @@ import 'package:mercado_zap/providers/cart_provider.dart';
 import 'package:provider/provider.dart';
 
 class MainPage extends StatefulWidget {
-  // const MainPage({Key? key}) : super(key: key);
+ 
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -23,13 +23,7 @@ class _MainPageState extends State<MainPage> {
     final colors = theme.colorScheme;
     final cart = Provider.of<CartProvider>(context);
     final quantidade = cart.quantidadeTotal;
-    //se caso eu precise exibir quntidade de tal produto eu chamo igual e so coloco
-
-    //Total de produtos diferentes: cart.itens.length
-
-    //Total de unidades: cart.quantidadeTotal
-
-    //Total de unidades:cart.total
+  
 
     return Scaffold(
       body: _telas[_currentIndex],

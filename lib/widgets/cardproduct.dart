@@ -235,9 +235,9 @@ void openProductSheet(BuildContext context, Product product) {
     backgroundColor: Colors.transparent,
     builder: (context) {
       return DraggableScrollableSheet(
-        initialChildSize: 0.6, // 👈 começa em 60%
-        minChildSize: 0.4, // 👈 mínimo
-        maxChildSize: 0.6, // 👈 máximo (quase tela toda)
+        initialChildSize: 0.6, 
+        minChildSize: 0.4, 
+        maxChildSize: 0.6, 
         expand: false,
         builder: (_, controller) {
           return ProductSheet(product: product, scrollController: controller);

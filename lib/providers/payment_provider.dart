@@ -56,27 +56,6 @@ class PaymentProvider extends ChangeNotifier {
     }
   }
 
-  // gerar qr code
-  // void startChecking() {
-  //   timer = Timer.periodic(const Duration(seconds: 5), (_) async {
-  //     try {
-  //       final response = await service.checkPayment(paymentId);
-
-  //       print(response);
-
-  //       if (response['data']['status'] == 'PAID') {
-  //         approved = true;
-
-  //         timer?.cancel();
-
-  //         notifyListeners();
-  //       }
-  //     } catch (e) {
-  //       print(e);
-  //     }
-  //   });
-  // }
-  //gerar qrcode manual com aprovacao automatica
   void startChecking() {
     timer?.cancel();
 

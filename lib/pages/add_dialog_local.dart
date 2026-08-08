@@ -70,7 +70,7 @@ class _AddLocalDialogState extends State<AddLocalDialog> {
     );
     updated.add(endereco.toMap());
 
-    await _box.put('addresses', updated); // salva lista de Map
+    await _box.put('addresses', updated);
   }
 
   void _submit() async {
